@@ -308,7 +308,7 @@ window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); })
 /* ========== one-line section hints (first visit, dismissible) ========== */
 const touchUI = () => window.matchMedia('(pointer:coarse)').matches;
 const HINTS = {
-  words: () => 'Нажми «Карточки» и ' + (touchUI() ? 'свайпай: <b>→ знаю</b>, <b>← не вспомнил</b>, <b>↑ с трудом</b>.' : 'отвечай клавишами <b>1</b>, <b>2</b>, <b>3</b> или кнопками.') + ' Забытые слова вернутся на повтор.',
+  words: () => '<b>Карточки</b>: вспомни слово сам, открой ответ и честно оцени ' + (touchUI() ? 'свайпом: → знаю, ← не вспомнил, ↑ с трудом.' : 'клавишами 1, 2, 3.') + ' Сайт проверяет тебя сам в <b>«Тесте»</b>.',
   reading: () => 'Выбери часть или весь вариант. Решай без подсказок, потом жми <b>«Проверить»</b> — покажем баллы и объясним каждый ответ.',
   writing: () => 'Открой шпаргалку формата: структура и готовые фразы. Потом жми <b>«' + WRITE_LABEL + '»</b>.',
   write: () => 'Нажми <b>«Старт 40 минут»</b>, как на экзамене, и следи за счётчиком слов. Черновик сохраняется сам.' + (IN_CLAUDE ? ' Готово — жми «Проверить с Claude».' : ''),
@@ -317,9 +317,9 @@ const HINTS = {
 function hint(key) {
   try { if (localStorage.getItem('b2:hint:' + key) === '1') return; } catch (e) {}
   const head = view.querySelector('.page > .head'); if (!head || !HINTS[key]) return;
-  head.insertAdjacentHTML('afterend', '<div class="hint" role="note"><span class="hint-i">' + ICON.bulb + '</span><p>' + HINTS[key]() + '</p><button type="button" class="hint-x" aria-label="Понятно, скрыть подсказку">' + ICON.x + '</button></div>');
+  head.insertAdjacentHTML('afterend', '<div class="nudge" role="note"><span class="nudge-i">' + ICON.bulb + '</span><p>' + HINTS[key]() + '</p><button type="button" class="nudge-x" aria-label="Понятно, скрыть подсказку">' + ICON.x + '</button></div>');
   const el = head.nextElementSibling;
-  el.querySelector('.hint-x').onclick = () => { try { localStorage.setItem('b2:hint:' + key, '1'); } catch (e) {} el.remove(); };
+  el.querySelector('.nudge-x').onclick = () => { try { localStorage.setItem('b2:hint:' + key, '1'); } catch (e) {} el.remove(); };
 }
 
 /* ========== home ========== */
@@ -497,7 +497,7 @@ function Cards() {
     '<div class="seg"><button data-dir="fwd" class="' + (fwd ? 'on' : '') + '">' + (up ? 'простое → сильное' : 'EN → RU') + '</button><button data-dir="rev" class="' + (fwd ? '' : 'on') + '">' + (up ? 'слово → значение' : 'RU → EN') + '</button></div></div>' +
     '<div class="wcard' + (S.enter ? ' enter' : '') + (S.flip ? ' swipe' : '') + '" id="card"' + (S.flip ? ' aria-label="Оцени, насколько хорошо помнишь: свайп вправо — знаю, влево — не вспомнил, вверх — с трудом"' : ' role="button" tabindex="0" aria-label="Показать ответ"') + '>' +
     (S.flip ? '<span class="stamp l" aria-hidden="true">Не вспомнил</span><span class="stamp r" aria-hidden="true">Знаю</span><span class="stamp u" aria-hidden="true">С трудом</span>' : '') +
-    front + (S.flip ? '<div class="reveal"><hr>' + back + '</div>' : '<div class="hint">Нажми на карточку, чтобы увидеть ответ <span class="kbd">Пробел</span></div>') + '</div>' +
+    front + (S.flip ? '<div class="reveal"><hr>' + back + '</div>' : '<div class="hint">Сначала вспомни сам, потом открой ответ <span class="kbd">Пробел</span></div>') + '</div>' +
     (S.flip ? '<div class="swipe-hint" aria-hidden="true"><span class="l">← не вспомнил</span><span class="u">↑ с трудом</span><span class="r">знаю →</span></div>' +
       '<div class="grades sticky"><button class="btn go-bad" data-g="0"><span class="kbd">1</span>Не вспомнил</button><button class="btn mid" data-g="1"><span class="kbd">2</span>С трудом</button><button class="btn go-ok" data-g="2"><span class="kbd">3</span>Знаю</button></div>' :
       '<div class="grades sticky"><button class="btn pri lg" id="show">Показать ответ</button></div>') + '</div>';

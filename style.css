@@ -515,7 +515,7 @@ textarea.essay{width:100%;min-height:400px;resize:vertical;font-family:var(--ser
 .swipe-hint{display:none;justify-content:space-between;gap:8px;width:100%;max-width:720px;margin:-8px auto 0;font-size:12px;font-weight:700;color:var(--muted)}
 .swipe-hint .l{color:var(--bad-ink)}.swipe-hint .u{color:var(--flame-deep)}.swipe-hint .r{color:var(--ok-ink)}
 html.no-scroll,html.no-scroll body{overscroll-behavior:none}
-@media (pointer:coarse){.swipe-hint{display:flex}.grades .btn .kbd,.opt .kbd{display:none}}
+@media (pointer:coarse){.swipe-hint{display:flex}.grades .btn .kbd,.opt .kbd,.wcard .hint .kbd{display:none}}
 
 /* ---------- home: goal card ---------- */
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
@@ -579,14 +579,14 @@ a.chip:hover{border-color:var(--edge)}
 }
 
 /* ---------- one-line section hints ---------- */
-.hint{display:flex;align-items:flex-start;gap:10px;padding:10px 8px 10px 14px;border-radius:14px;background:var(--accent-soft);border:2px solid color-mix(in oklch,var(--accent) 25%,var(--line));color:var(--ink)}
-.hint-i{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--accent);color:#fff}
-.hint-i svg{width:17px;height:17px}
-.hint p{flex:1;margin:0;padding-top:3px;font-size:14px;line-height:1.45}
-.hint b{font-weight:800;color:var(--accent-ink)}
-.hint-x{flex:none;display:grid;place-items:center;width:32px;height:32px;margin:-2px 0;border:0;border-radius:9px;background:none;color:var(--muted);cursor:pointer}
-.hint-x:hover{background:color-mix(in oklch,var(--accent) 12%,transparent);color:var(--ink)}
-.hint-x svg{width:16px;height:16px}
+.nudge{display:flex;align-items:flex-start;gap:10px;padding:10px 8px 10px 14px;border-radius:14px;background:var(--accent-soft);border:2px solid color-mix(in oklch,var(--accent) 25%,var(--line));color:var(--ink)}
+.nudge-i{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--accent);color:#fff}
+.nudge-i svg{width:17px;height:17px}
+.nudge p{flex:1;margin:0;padding-top:3px;font-size:14px;line-height:1.45}
+.nudge b{font-weight:800;color:var(--accent-ink)}
+.nudge-x{flex:none;display:grid;place-items:center;width:32px;height:32px;margin:-2px 0;border:0;border-radius:9px;background:none;color:var(--muted);cursor:pointer}
+.nudge-x:hover{background:color-mix(in oklch,var(--accent) 12%,transparent);color:var(--ink)}
+.nudge-x svg{width:16px;height:16px}
 
 /* ---------- home on a phone: sections first, stats last ---------- */
 @media (max-width:900px){
