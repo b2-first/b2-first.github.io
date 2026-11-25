@@ -309,16 +309,16 @@ window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); })
 /* ========== home ========== */
 const introSeen = () => { try { return localStorage.getItem('b2:intro') === '1'; } catch (e) { return false; } };
 function introHTML(g) {
-  const it = (c, icon, title, text) => '<li style="--c:var(' + c + ')"><span class="ic">' + ICON[icon] + '</span><div><b>' + title + '</b><p>' + text + '</p></div></li>';
+  const it = (href, c, icon, title, text, go) => '<li><a href="#' + href + '" style="--c:var(' + c + ')"><span class="ic">' + ICON[icon] + '</span><div><b>' + title + '</b><p>' + text + '</p><span class="go">' + go + ' →</span></div></a></li>';
   return '<section class="card intro" id="intro" aria-labelledby="introH">' +
     '<div class="intro-h"><div><div class="eyebrow">Добро пожаловать</div><h2 id="introH">Как тут всё устроено</h2></div>' +
     '<button class="btn sm ghost" id="introX" type="button" aria-label="Скрыть инструкцию">' + ICON.x + '</button></div>' +
     '<p class="muted">Три раздела — как три части экзамена B2 First. Начинай с любого, порядок не важен.</p>' +
     '<ol class="intro-l">' +
-    it('--c-words', 'cards', 'Слова', 'Выбери набор: <b>Upgrade</b>, <b>Тетрадь</b> или <b>Словарь A–Z</b> и нажми «Карточки». Переверни карточку и свайпни: вправо — знаю, влево — не вспомнил, вверх — с трудом (на компьютере — клавиши 1, 2, 3). Забытые слова вернутся на повтор. «Тест» — выбрать верный вариант из четырёх.') +
-    it('--c-reading', 'book', 'Reading &amp; Use of English', 'Все 7 частей экзамена. Решай без подсказок, потом жми «Проверить» — увидишь баллы и объяснение к каждому ответу.') +
-    it('--c-writing', 'pen', 'Writing', '<b>Шпаргалки</b> — как писать эссе, письмо, статью и другие форматы, с готовыми фразами. ' + (IN_CLAUDE ? '<b>Написать и проверить</b> — Claude оценит текст по 4 критериям FCE.' : '<b>Тренировка письма</b> — пишешь текст по заданию с таймером и счётчиком слов, черновик сохраняется сам.')) +
-    it('--flame', 'fire', 'XP и стрик', 'За занятия получаешь XP: «знаю» +1, верный ответ в тесте +2, Reading — баллы как на экзамене. Набери цель дня (сейчас ' + g + ' XP), чтобы огонёк серии не погас.') +
+    it('words-up', '--c-words', 'cards', 'Слова', 'Выбери набор: <b>Upgrade</b>, <b>Тетрадь</b> или <b>Словарь A–Z</b> и нажми «Карточки». Переверни карточку и свайпни: вправо — знаю, влево — не вспомнил, вверх — с трудом (на компьютере — клавиши 1, 2, 3). Забытые слова вернутся на повтор. «Тест» — выбрать верный вариант из четырёх.', 'Учить слова') +
+    it('reading', '--c-reading', 'book', 'Reading &amp; Use of English', 'Все 7 частей экзамена. Решай без подсказок, потом жми «Проверить» — увидишь баллы и объяснение к каждому ответу.', 'Решать Reading') +
+    it('writing', '--c-writing', 'pen', 'Writing', '<b>Шпаргалки</b> — как писать эссе, письмо, статью и другие форматы, с готовыми фразами. ' + (IN_CLAUDE ? '<b>Написать и проверить</b> — Claude оценит текст по 4 критериям FCE.' : '<b>Тренировка письма</b> — пишешь текст по заданию с таймером и счётчиком слов, черновик сохраняется сам.'), 'Открыть Writing') +
+    it('badges', '--flame', 'fire', 'XP и стрик', 'За занятия получаешь XP: «знаю» +1, верный ответ в тесте +2, Reading — баллы как на экзамене. Набери цель дня (сейчас ' + g + ' XP), чтобы огонёк серии не погас.', 'Цель и достижения') +
     '</ol>' +
     '<div class="intro-f"><button class="btn pri lg" id="introOk" type="button">Понятно, поехали →</button><span class="note">Прогресс хранится в этом браузере. Инструкция всегда есть в меню: «Как пользоваться».</span></div>' +
     '</section>';
@@ -365,6 +365,7 @@ function Home() {
     };
     $('#introOk').addEventListener('click', close);
     $('#introX').addEventListener('click', close);
+    intro.querySelectorAll('.intro-l a').forEach(a => a.addEventListener('click', () => { try { localStorage.setItem('b2:intro', '1'); } catch (e) {} }));
     if (location.hash === '#guide') intro.scrollIntoView({ block: 'start' });
   }
 }
