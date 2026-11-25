@@ -577,3 +577,40 @@ a.chip:hover{border-color:var(--edge)}
   .fbar .ex{font-size:15px}
   .fbar .btn{min-height:52px}
 }
+
+/* ---------- home: first-visit guide ---------- */
+.intro{display:flex;flex-direction:column;gap:14px;border-color:color-mix(in oklch,var(--accent) 35%,var(--line));background:linear-gradient(160deg,var(--accent-soft),var(--surface) 55%)}
+.intro-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.intro-h h2{font:700 22px/1.2 var(--display);margin:4px 0 0}
+.intro-h .eyebrow{color:var(--accent-ink)}
+.intro-h .btn{min-width:38px;padding:6px;color:var(--muted)}
+.intro>p{margin:0}
+.intro-l{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.intro-l li{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px 16px}
+.intro-l .ic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--c);color:#fff;box-shadow:0 3px 0 color-mix(in oklch,var(--c) 70%,black)}
+.intro-l .ic svg{width:21px;height:21px}
+.intro-l b{font-weight:800}
+.intro-l div>b:first-child{display:block;font-size:16px;margin-bottom:3px}
+.intro-l p{margin:0;font-size:14px;line-height:1.5;color:var(--soft)}
+.intro-f{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+@media (max-width:700px){
+  .intro-l{grid-template-columns:minmax(0,1fr)}
+  .intro-f .btn{width:100%}
+}
+
+/* ---------- home on a phone: sections first, stats last ---------- */
+@media (max-width:900px){
+  .page.home{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .page.home>*{grid-column:1/-1}
+  .home .head,.home .grid4{display:contents}
+  .home .head>div{order:0;grid-column:1/-1}
+  .home .grid3{order:1}
+  .home .cont{order:2}
+  .home .goal-card{order:3;grid-column:1/-1}
+  .home .grid4>.stat:not(.goal-card){order:4;grid-column:auto}
+  .home .grid4>.stat:nth-child(3){grid-column:1/-1}
+  .home .head>label{order:5;grid-column:1/-1}
+}
+@media (max-width:600px){
+  .home .grid4>.stat:not(.goal-card) b{font-size:22px}
+}
