@@ -1,0 +1,168 @@
+{
+ "general": [
+  "Объём: <b>140–190 слов</b> в каждой части. Меньше 140 — минус за содержание, сильно больше — риск потерять баллы за организацию и время.",
+  "Время: 80 минут на две части. План — 5 минут, текст — 25–30, проверка — 5.",
+  "Оценивают 4 критерия по 0–5: <b>Content</b> (всё ли из задания раскрыто), <b>Communicative Achievement</b> (жанр и стиль), <b>Organisation</b> (абзацы, связки), <b>Language</b> (лексика и грамматика).",
+  "Перед сдачей проверь: артикли, времена, -s в 3-м лице, предлоги, согласование this/these, запятые после вводных слов.",
+  "Не надо апгрейдить каждое слово: 4–6 точных сильных слов лучше, чем 15 неуверенных."
+ ],
+ "formats": [
+  {
+   "id": "essay",
+   "name": "Essay",
+   "part": "Part 1 — обязательно",
+   "style": "Нейтральный / формальный. Без сокращений (do not, it is).",
+   "when": "Всегда в Part 1. Дан вопрос и две идеи (notes) + третья — твоя собственная.",
+   "structure": [
+    ["Вступление", "Перефразируй вопрос своими словами, покажи, что тема спорная. Без своей позиции или с осторожной."],
+    ["Абзац 1", "Идея 1 из задания: аргумент + пример или объяснение."],
+    ["Абзац 2", "Идея 2 из задания: аргумент + пример."],
+    ["Абзац 3", "Твоя идея (обязательно!). Можно контраргумент."],
+    ["Заключение", "Взвесь всё и дай чёткий ответ на вопрос. Не добавляй новых аргументов."]
+   ],
+   "phrases": [
+    ["Начало", "It is often argued that… · Nowadays, many people believe that… · There is no doubt that… has become a hot topic."],
+    ["Добавить", "Firstly, … · In addition, … · Moreover, … · Another point to consider is…"],
+    ["Контраст", "However, … · On the other hand, … · Although…, … · Whereas…"],
+    ["Пример / результат", "For instance, … · As a result, … · Consequently, … · This means that…"],
+    ["Мнение", "As far as I am concerned, … · In my view, … · I firmly believe that…"],
+    ["Вывод", "To sum up, … · All things considered, … · On balance, I would say that…"]
+   ],
+   "mistakes": [
+    "Забыть третью идею — сразу минус по Content.",
+    "Сокращения и разговорные слова (kids, stuff, gonna).",
+    "Заключение без ответа на вопрос из задания.",
+    "Повторять формулировки задания слово в слово вместо перефразирования."
+   ]
+  },
+  {
+   "id": "article",
+   "name": "Article",
+   "part": "Part 2",
+   "style": "Живой, нейтральный или полуформальный. Можно сокращения. Пишешь для читателей журнала или сайта.",
+   "when": "Журнал/сайт просит статью и задаёт 2–3 вопроса, на которые нужно ответить.",
+   "structure": [
+    ["Заголовок", "Короткий и цепляющий. Можно вопрос."],
+    ["Вступление", "Зацепи читателя: вопрос к нему, интересный факт, короткая ситуация."],
+    ["Основная часть (2 абзаца)", "Ответы на вопросы из задания, с примерами из жизни."],
+    ["Концовка", "Вывод, совет читателю или вопрос, над которым стоит подумать."]
+   ],
+   "phrases": [
+    ["Зацепить", "Have you ever wondered…? · Imagine… · Believe it or not, … · Let's face it: …"],
+    ["Обращение к читателю", "You might think… · If you're anything like me, … · We've all been there."],
+    ["Описать", "What I love most about… is… · The best thing about… is that…"],
+    ["Закончить", "So, next time you…, why not…? · Give it a try – you won't regret it!"]
+   ],
+   "mistakes": [
+    "Нет заголовка.",
+    "Слишком формально, как эссе: читателю скучно.",
+    "Ответил не на все вопросы из задания."
+   ]
+  },
+  {
+   "id": "story",
+   "name": "Story",
+   "part": "Part 2",
+   "style": "Нейтральный, яркий. Прошедшие времена. Сокращения можно.",
+   "when": "Дано первое (или последнее) предложение и 2 элемента, которые нужно включить.",
+   "structure": [
+    ["Начало", "Заданное предложение — СЛОВО В СЛОВО. Сразу: кто, где, когда."],
+    ["Развитие", "События по порядку, нарастание напряжения. Оба элемента из задания должны работать в сюжете."],
+    ["Кульминация", "Самый напряжённый момент: чувства, детали, можно диалог."],
+    ["Развязка", "Чем кончилось и что герой понял или почувствовал."]
+   ],
+   "phrases": [
+    ["Время", "At first, … · Moments later, … · Just as…, … · The following day, … · In the end, …"],
+    ["Неожиданно", "Out of the blue, … · All of a sudden, … · Much to his surprise, … · It turned out that…"],
+    ["Чувства", "His heart was pounding. · She was over the moon. · He couldn't believe his eyes."],
+    ["Сильная грамматика", "No sooner had he… than… · Little did she know that… · Past Perfect для предыстории."]
+   ],
+   "mistakes": [
+    "Изменить заданное предложение (trip вместо journey).",
+    "Элемент из задания вставлен формально, в последней строке.",
+    "Смешение времён: начал в прошлом, перешёл в настоящее.",
+    "Слишком длинная предыстория, на кульминацию не хватает слов."
+   ]
+  },
+  {
+   "id": "review",
+   "name": "Review",
+   "part": "Part 2",
+   "style": "Нейтральный, оценочный. Можно сокращения.",
+   "when": "Отзыв о фильме, книге, ресторане, приложении, месте и т. п. Обычно: опиши + оцени + порекомендуй.",
+   "structure": [
+    ["Заголовок + вступление", "Что это, где/когда ты это увидел или попробовал."],
+    ["Описание", "Коротко о главном: сюжет без спойлеров, меню, функции."],
+    ["Оценка", "Что понравилось и что нет — с конкретными примерами."],
+    ["Рекомендация", "Кому подойдёт и стоит ли это того."]
+   ],
+   "phrases": [
+    ["Описание", "It is set in… · The story revolves around… · It features…"],
+    ["Плюсы", "What really stands out is… · The highlight for me was… · It is absolutely stunning."],
+    ["Минусы", "The only drawback is… · My one complaint would be… · It was a bit of a letdown."],
+    ["Рекомендация", "I would highly recommend it to… · It's well worth a visit. · Give it a miss if…"]
+   ],
+   "mistakes": [
+    "Пересказ всего сюжета вместо оценки.",
+    "Нет рекомендации в конце.",
+    "Только «good/bad/nice» — используй сильные прилагательные."
+   ]
+  },
+  {
+   "id": "email",
+   "name": "Email / Letter",
+   "part": "Part 2",
+   "style": "Informal (другу) — сокращения, разговорные фразы. Formal (в компанию, редакции) — без сокращений, вежливо.",
+   "when": "Ответ на письмо или письмо с просьбой/предложением/жалобой.",
+   "structure": [
+    ["Приветствие", "Informal: Hi Tom, / Formal: Dear Sir or Madam, · Dear Mr Smith,"],
+    ["Вступление", "Зачем пишешь / реакция на письмо."],
+    ["Основная часть", "Ответь на КАЖДЫЙ вопрос из письма-задания, отдельными абзацами."],
+    ["Концовка", "Informal: Write back soon! Best, / Formal: I look forward to hearing from you. Yours faithfully (если не знаешь имени) / Yours sincerely (если знаешь)."]
+   ],
+   "phrases": [
+    ["Informal", "Thanks for your email! · It was great to hear from you. · Guess what? · Anyway, … · Let me know what you think."],
+    ["Formal", "I am writing to enquire about… · I would be grateful if you could… · Please find… · I would appreciate it if…"],
+    ["Совет", "If I were you, I'd… · Why don't you…? · You could always…"],
+    ["Извинение / отказ", "I'm afraid I can't… · I'm really sorry, but… · Unfortunately, …"]
+   ],
+   "mistakes": [
+    "Смешение стилей: Dear Sir + Cheers!",
+    "Пропущен один из вопросов письма.",
+    "Yours faithfully, когда знаешь имя адресата."
+   ]
+  },
+  {
+   "id": "report",
+   "name": "Report",
+   "part": "Part 2",
+   "style": "Формальный, безличный. Подзаголовки. Без сокращений.",
+   "when": "Отчёт для директора, клуба, начальника: описать ситуацию и дать рекомендации.",
+   "structure": [
+    ["Introduction", "The aim of this report is to… · Цель отчёта одной-двумя фразами."],
+    ["Разделы с подзаголовками", "По одному на каждый пункт задания. Факты, можно списки."],
+    ["Recommendations / Conclusion", "Что конкретно предлагаешь и почему."]
+   ],
+   "phrases": [
+    ["Цель", "The aim of this report is to… · This report outlines…"],
+    ["Данные", "According to a survey of… · The majority of students… · A significant number of…"],
+    ["Рекомендации", "I would recommend that… · It would be advisable to… · The best solution would be to…"],
+    ["Вывод", "In conclusion, … · Overall, it is clear that…"]
+   ],
+   "mistakes": [
+    "Нет подзаголовков — сразу минус по Organisation.",
+    "Личный, эмоциональный стиль («I really love…»).",
+    "Рекомендации без обоснования."
+   ]
+  }
+ ],
+ "tasks": [
+  {"id": "t-essay", "fmt": "essay", "title": "Social media and friendship", "text": "In your English class you have been talking about technology and relationships. Now your English teacher has asked you to write an essay.\n\nWrite an essay using all the notes and giving reasons for your point of view.\n\nDo social media make it easier or harder to have real friendships?\n\nNotes — write about:\n1. keeping in touch\n2. time spent face to face\n3. ……… (your own idea)"},
+  {"id": "t-essay2", "fmt": "essay", "title": "School uniforms", "text": "In your English class you have been talking about school life. Now your English teacher has asked you to write an essay.\n\nWrite an essay using all the notes and giving reasons for your point of view.\n\nShould all secondary school students have to wear a uniform?\n\nNotes — write about:\n1. cost for families\n2. expressing personality\n3. ……… (your own idea)"},
+  {"id": "t-article", "fmt": "article", "title": "A skill worth learning", "text": "You see this announcement on an English-language website for teenagers.\n\nArticles wanted!\nA skill everyone should learn\nWhat skill do you think every young person should learn, and why? How did you learn it, and how has it helped you?\nThe best articles will be published next month.\n\nWrite your article."},
+  {"id": "t-story", "fmt": "story", "title": "The journey", "text": "You have seen this announcement in an English-language magazine.\n\nWe want your story!\nYour story must begin with this sentence:\nJim knew it would be a long journey, but he couldn't wait to set off.\nYour story must include:\n• a mobile phone\n• a new friend\n\nWrite your story."},
+  {"id": "t-review", "fmt": "review", "title": "An app you use", "text": "You see this notice on an English-language website.\n\nReviews wanted!\nAn app I couldn't live without\nWrite a review of an app you use regularly. Tell us what it does, what you like and dislike about it, and whether you would recommend it to other people.\n\nWrite your review."},
+  {"id": "t-email", "fmt": "email", "title": "Visit from a friend", "text": "You have received this email from your English-speaking friend Alex.\n\nHi!\nGreat news — I'm coming to your country for a week next summer! What's the best time of year to visit? Which places in your area should I definitely see? And what should I pack?\nThanks,\nAlex\n\nWrite your email."},
+  {"id": "t-report", "fmt": "report", "title": "School library", "text": "The principal of your school wants to make the school library more popular with students. She has asked you to write a report explaining why students do not use the library much at the moment and recommending changes that would encourage more students to use it.\n\nWrite your report."}
+ ]
+}
