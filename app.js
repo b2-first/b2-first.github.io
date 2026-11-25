@@ -32,7 +32,8 @@ const ICON = {
   list: svgI('<path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="2.4"/>'),
   up: svgI('<path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/>'),
   medal: svgI('<circle cx="12" cy="15" r="6"/><path d="M8.5 10.2 6 2.5h4l2 4.5 2-4.5h4l-2.5 7.7M12 12.5v5"/>'),
-  sheet: svgI('<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/>')
+  sheet: svgI('<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/>'),
+  bulb: svgI('<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>')
 };
 
 /* ========== storage: account (db) or this browser ========== */
@@ -304,6 +305,23 @@ function route() {
 }
 window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
 
+/* ========== one-line section hints (first visit, dismissible) ========== */
+const touchUI = () => window.matchMedia('(pointer:coarse)').matches;
+const HINTS = {
+  words: () => 'Нажми «Карточки» и ' + (touchUI() ? 'свайпай: <b>→ знаю</b>, <b>← не вспомнил</b>, <b>↑ с трудом</b>.' : 'отвечай клавишами <b>1</b>, <b>2</b>, <b>3</b> или кнопками.') + ' Забытые слова вернутся на повтор.',
+  reading: () => 'Выбери часть или весь вариант. Решай без подсказок, потом жми <b>«Проверить»</b> — покажем баллы и объясним каждый ответ.',
+  writing: () => 'Открой шпаргалку формата: структура и готовые фразы. Потом жми <b>«' + WRITE_LABEL + '»</b>.',
+  write: () => 'Нажми <b>«Старт 40 минут»</b>, как на экзамене, и следи за счётчиком слов. Черновик сохраняется сам.' + (IN_CLAUDE ? ' Готово — жми «Проверить с Claude».' : ''),
+  badges: () => 'XP: «Знаю» +1, верный ответ в тесте +2, Reading — баллы Cambridge. Набирай цель дня, чтобы огонёк серии не погас.'
+};
+function hint(key) {
+  try { if (localStorage.getItem('b2:hint:' + key) === '1') return; } catch (e) {}
+  const head = view.querySelector('.page > .head'); if (!head || !HINTS[key]) return;
+  head.insertAdjacentHTML('afterend', '<div class="hint" role="note"><span class="hint-i">' + ICON.bulb + '</span><p>' + HINTS[key]() + '</p><button type="button" class="hint-x" aria-label="Понятно, скрыть подсказку">' + ICON.x + '</button></div>');
+  const el = head.nextElementSibling;
+  el.querySelector('.hint-x').onclick = () => { try { localStorage.setItem('b2:hint:' + key, '1'); } catch (e) {} el.remove(); };
+}
+
 /* ========== home ========== */
 function Home() {
   const d = Store.data, res = d.reading.results || {};
@@ -416,6 +434,7 @@ function Words(set) {
     draw();
   }
   if (WS.tab === 'mist' && mistakes(set).length) wordTable(mistakes(set));
+  hint('words');
 }
 function wordTable(ws) {
   const up = WS.set === 'up';
@@ -661,6 +680,7 @@ function Badges() {
         (has ? '<span class="when">Получено ' + new Date(got[b[0]]).toLocaleDateString('ru-RU') + '</span>' : need > 1 ? '<div class="bar" style="--c:var(' + b[4] + ')"><i style="width:' + Math.min(100, v / need * 100).toFixed(0) + '%"></i></div><span class="muted small">' + Math.min(v, need) + ' / ' + need + '</span>' : '') + '</div>';
     }).join('') + '</div></div>';
   view.querySelectorAll('[data-goal]').forEach(b => b.onclick = () => { Store.data.meta.goal = +b.dataset.goal; Store.save('meta'); checkBadges(); renderHud(); Badges(); });
+  hint('badges');
 }
 
 /* ========== reading ========== */
@@ -681,6 +701,7 @@ function ReadingHub() {
         (r ? '<div class="prog"><div class="bar"><i style="width:' + (r.best / max * 100).toFixed(1) + '%"></i></div>' + r.best + '/' + max + '</div><div class="muted small">Лучший результат · последний: ' + r.last + '/' + max + '</div>' : '<div class="muted small">' + p.q.length + ' ' + plural(p.q.length, 'вопрос', 'вопроса', 'вопросов') + ' · ' + max + ' ' + plural(max, 'балл', 'балла', 'баллов') + '</div>') +
         '<span class="go">' + (r ? 'Ещё раз →' : 'Начать →') + '</span></a>';
     }).join('') + '</div></div>';
+  hint('reading');
 }
 
 let E = null;
@@ -880,6 +901,7 @@ function WritingHub() {
     '<div class="grid3">' + WR.formats.map(f => '<a class="card fmt" href="#fmt-' + f.id + '"><div class="muted small">' + esc(f.part) + '</div><h3>' + esc(f.name) + '</h3><p class="muted small">' + esc(f.style) + '</p><span class="go" style="color:var(--accent);font-weight:600;font-size:14px;margin-top:6px">Шпаргалка →</span></a>').join('') + '</div>' +
     (hist.length ? '<div><h2 style="margin-bottom:12px">Мои проверенные тексты</h2><table class="wl"><thead><tr><th>Задание</th><th>Дата</th><th>Слов</th><th>Баллы</th></tr></thead><tbody>' +
       hist.slice(0, 20).map(h => '<tr><td class="en"><a href="#write-' + esc(h.task) + '">' + esc(h.title) + '</a> <span class="muted small">' + esc(h.fmt) + '</span></td><td>' + new Date(h.t).toLocaleDateString('ru-RU') + '</td><td>' + h.words + '</td><td><b>' + h.total + '</b>/20</td></tr>').join('') + '</tbody></table></div>' : '') + '</div>';
+  hint('writing');
 }
 function Sheet(id) {
   const f = WR.formats.find(x => x.id === id); if (!f) return WritingHub();
@@ -925,6 +947,7 @@ function Write(taskId) {
   if (d.fb) showFeedback(d.fb, d.fbText || ta.value);
   if (IN_CLAUDE) $('#chk').onclick = () => checkText(t, f, ta.value, count());
   if (IN_CLAUDE && sampleNS === null) { $('#chk').disabled = true; $('#chkNote').textContent = 'Проверка доступна, когда сайт открыт в Claude и ты вошёл в аккаунт.'; }
+  hint('write');
 }
 async function checkText(t, f, text, n) {
   const box = $('#fbk'), btn = $('#chk');
