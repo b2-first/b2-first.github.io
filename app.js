@@ -32,8 +32,7 @@ const ICON = {
   list: svgI('<path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="2.4"/>'),
   up: svgI('<path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/>'),
   medal: svgI('<circle cx="12" cy="15" r="6"/><path d="M8.5 10.2 6 2.5h4l2 4.5 2-4.5h4l-2.5 7.7M12 12.5v5"/>'),
-  sheet: svgI('<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/>'),
-  help: svgI('<circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.8M12 17.2h.01" stroke-width="2.4"/>')
+  sheet: svgI('<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/>')
 };
 
 /* ========== storage: account (db) or this browser ========== */
@@ -273,7 +272,7 @@ function renderNav(h) {
     ['s', 'Слова'], ['a', 'Upgrade', 'words-up', W ? learned('up') + '/' + n.up : '', 'up', '--c-words'], ['a', 'Тетрадь', 'words-nb', W ? learned('nb') + '/' + n.nb : '', 'list', '--c-words'], ['a', 'Словарь B2 · A–Z', 'words-b2', W ? learned('b2') + '/' + n.b2 : '', 'cards', '--c-words'],
     ['s', 'Reading & Use of English'], ['a', 'Вариант 1 · все части', 'reading', Object.keys(res).length + '/7', 'book', '--c-reading'],
     ['s', 'Writing'], ['a', 'Шпаргалки', 'writing', '', 'sheet', '--c-writing'], ['a', WRITE_LABEL, 'write', '', 'pen', '--c-writing'],
-    ['s', 'Прогресс'], ['a', 'Достижения', 'badges', got + '/' + BADGES.length, 'medal', '--gold-deep'], ['a', 'Как пользоваться', 'guide', '', 'help', '--accent']
+    ['s', 'Прогресс'], ['a', 'Достижения', 'badges', got + '/' + BADGES.length, 'medal', '--gold-deep']
   ];
   $('#nav').innerHTML = items.map(it => it[0] === 's' ? '<div class="nav-h">' + esc(it[1]) + '</div>'
     : '<a href="#' + it[2] + '" class="' + ((h === it[2] || (it[2] === 'write' && h.startsWith('write-')) || (it[2] === 'writing' && h.startsWith('fmt-')) || (it[2] === 'reading' && (h.startsWith('part-') || h === 'full-test'))) ? 'on' : '') + '"><span class="ni" style="--c:var(' + it[5] + ')">' + ICON[it[4]] + '</span><span class="lb">' + esc(it[1]) + '</span>' + (it[3] ? '<span class="cnt">' + esc(it[3]) + '</span>' : '') + '</a>').join('');
@@ -290,7 +289,6 @@ function route() {
   renderNav(h);
   if (!W) { view.innerHTML = '<div class="page"><div class="empty">Загрузка…</div></div>'; return; }
   if (h === 'home') return Home();
-  if (h === 'guide') { try { localStorage.removeItem('b2:intro'); } catch (e) {} return Home(); }
   if (h === 'words' || h === 'words-up') return Words('up');
   if (h === 'words-nb') return Words('nb');
   if (h === 'words-b2') return Words('b2');
@@ -307,22 +305,6 @@ function route() {
 window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
 
 /* ========== home ========== */
-const introSeen = () => { try { return localStorage.getItem('b2:intro') === '1'; } catch (e) { return false; } };
-function introHTML(g) {
-  const it = (href, c, icon, title, text, go) => '<li><a href="#' + href + '" style="--c:var(' + c + ')"><span class="ic">' + ICON[icon] + '</span><div><b>' + title + '</b><p>' + text + '</p><span class="go">' + go + ' →</span></div></a></li>';
-  return '<section class="card intro" id="intro" aria-labelledby="introH">' +
-    '<div class="intro-h"><div><div class="eyebrow">Добро пожаловать</div><h2 id="introH">Как тут всё устроено</h2></div>' +
-    '<button class="btn sm ghost" id="introX" type="button" aria-label="Скрыть инструкцию">' + ICON.x + '</button></div>' +
-    '<p class="muted">Три раздела — как три части экзамена B2 First. Начинай с любого, порядок не важен.</p>' +
-    '<ol class="intro-l">' +
-    it('words-up', '--c-words', 'cards', 'Слова', 'Выбери набор: <b>Upgrade</b>, <b>Тетрадь</b> или <b>Словарь A–Z</b> и нажми «Карточки». Переверни карточку и свайпни: вправо — знаю, влево — не вспомнил, вверх — с трудом (на компьютере — клавиши 1, 2, 3). Забытые слова вернутся на повтор. «Тест» — выбрать верный вариант из четырёх.', 'Учить слова') +
-    it('reading', '--c-reading', 'book', 'Reading &amp; Use of English', 'Все 7 частей экзамена. Решай без подсказок, потом жми «Проверить» — увидишь баллы и объяснение к каждому ответу.', 'Решать Reading') +
-    it('writing', '--c-writing', 'pen', 'Writing', '<b>Шпаргалки</b> — как писать эссе, письмо, статью и другие форматы, с готовыми фразами. ' + (IN_CLAUDE ? '<b>Написать и проверить</b> — Claude оценит текст по 4 критериям FCE.' : '<b>Тренировка письма</b> — пишешь текст по заданию с таймером и счётчиком слов, черновик сохраняется сам.'), 'Открыть Writing') +
-    it('badges', '--flame', 'fire', 'XP и стрик', 'За занятия получаешь XP: «знаю» +1, верный ответ в тесте +2, Reading — баллы как на экзамене. Набери цель дня (сейчас ' + g + ' XP), чтобы огонёк серии не погас.', 'Цель и достижения') +
-    '</ol>' +
-    '<div class="intro-f"><button class="btn pri lg" id="introOk" type="button">Понятно, поехали →</button><span class="note">Прогресс хранится в этом браузере. Инструкция всегда есть в меню: «Как пользоваться».</span></div>' +
-    '</section>';
-}
 function Home() {
   const d = Store.data, res = d.reading.results || {};
   const tot = W.words.length, lw = learned('up') + learned('nb') + learned('b2');
@@ -340,7 +322,6 @@ function Home() {
   view.innerHTML = '<div class="page home">' +
     '<div class="head"><div><div class="muted small">' + esc(examLine) + '</div><h1>Подготовка к B2 First</h1></div>' +
     '<label class="small muted" style="display:flex;flex-direction:column;gap:4px">Дата экзамена<input type="date" id="exDate" value="' + esc(d.meta.exam || '') + '"></label></div>' +
-    (introSeen() ? '' : introHTML(g)) +
     '<div class="grid4">' +
     '<div class="card stat"><div class="muted small">Слов выучено</div><b>' + lw + ' <small>/ ' + tot + '</small></b><div class="bar thin" style="margin-top:12px;--c:var(--c-words)"><i style="width:' + (lw / tot * 100).toFixed(1) + '%"></i></div></div>' +
     '<div class="card stat"><div class="muted small">Reading &amp; UoE</div><b>' + parts + ' <small>/ 7 частей</small></b><div class="bar thin" style="margin-top:12px;--c:var(--c-reading)"><i style="width:' + (parts / 7 * 100).toFixed(1) + '%"></i></div></div>' +
@@ -356,18 +337,6 @@ function Home() {
     tile('writing', '--c-writing', 'pen', 'Writing', (IN_CLAUDE ? 'Шпаргалки по 6 форматам и проверка твоего текста по критериям FCE.' : 'Шпаргалки по 6 форматам и тренировка письма с таймером и счётчиком слов.'), 'Писать') +
     '</div></div>';
   $('#exDate').addEventListener('change', e => { d.meta.exam = e.target.value; Store.save('meta'); Home(); });
-  const intro = $('#intro');
-  if (intro) {
-    const close = () => {
-      try { localStorage.setItem('b2:intro', '1'); } catch (e) {}
-      if (location.hash === '#guide') { history.replaceState(null, '', '#home'); renderNav('home'); }
-      intro.remove();
-    };
-    $('#introOk').addEventListener('click', close);
-    $('#introX').addEventListener('click', close);
-    intro.querySelectorAll('.intro-l a').forEach(a => a.addEventListener('click', () => { try { localStorage.setItem('b2:intro', '1'); } catch (e) {} }));
-    if (location.hash === '#guide') intro.scrollIntoView({ block: 'start' });
-  }
 }
 
 /* ========== words ========== */
