@@ -278,10 +278,10 @@ function renderNav(h) {
     ['s', 'Reading & Use of English'], ['a', RS.length > 1 ? 'Варианты 1–' + RS.length : 'Вариант 1', 'reading', W ? allDone() + '/' + RS.length * 7 : '', 'book', '--c-reading'],
     ['s', 'Writing'], ['a', 'Шпаргалки', 'writing', '', 'sheet', '--c-writing'], ['a', WRITE_LABEL, 'write', '', 'pen', '--c-writing'],
     ['s', 'Speaking'], ['a', 'Фразы и части', 'speaking', '', 'mic', '--c-speaking'], ['a', 'Мои фразы', 'speak-fav', String(Object.keys(Store.data.speaking.fav || {}).length || ''), 'star', '--c-speaking'],
-    ['s', 'Прогресс'], ['a', 'Достижения', 'badges', got + '/' + BADGES.length, 'medal', '--gold-deep']
+    ['s', 'Прогресс'], ['a', 'Пробный экзамен', 'mock', Store.data.reading.mock && Store.data.reading.mock.stage !== 'done' ? '…' : '', 'flag', '--accent'], ['a', 'Достижения', 'badges', got + '/' + BADGES.length, 'medal', '--gold-deep']
   ];
   $('#nav').innerHTML = items.map(it => it[0] === 's' ? '<div class="nav-h">' + esc(it[1]) + '</div>'
-    : '<a href="#' + it[2] + '" class="' + ((h === it[2] || (it[2] === 'write' && h.startsWith('write-')) || (it[2] === 'writing' && h.startsWith('fmt-')) || (it[2] === 'speaking' && h.startsWith('speak-') && h !== 'speak-fav') || (it[2] === 'reading' && (h.startsWith('part-') || h === 'full-test' || /^(reading-|v\d-)/.test(h)))) ? 'on' : '') + '"><span class="ni" style="--c:var(' + it[5] + ')">' + ICON[it[4]] + '</span><span class="lb">' + esc(it[1]) + '</span>' + (it[3] ? '<span class="cnt">' + esc(it[3]) + '</span>' : '') + '</a>').join('');
+    : '<a href="#' + it[2] + '" class="' + ((h === it[2] || (it[2] === 'write' && h.startsWith('write-')) || (it[2] === 'writing' && h.startsWith('fmt-')) || (it[2] === 'speaking' && h.startsWith('speak-') && h !== 'speak-fav') || (it[2] === 'mock' && h.startsWith('mock-')) || (it[2] === 'reading' && (h.startsWith('part-') || h === 'full-test' || /^(reading-|v\d-)/.test(h)))) ? 'on' : '') + '"><span class="ni" style="--c:var(' + it[5] + ')">' + ICON[it[4]] + '</span><span class="lb">' + esc(it[1]) + '</span>' + (it[3] ? '<span class="cnt">' + esc(it[3]) + '</span>' : '') + '</a>').join('');
   renderHud();
 }
 
@@ -307,6 +307,10 @@ function route() {
   if (h === 'full-test') { setV(1); return Exam('full', [1, 2, 3, 4, 5, 6, 7]); }
   if (h === 'writing') return WritingHub();
   if (h === 'badges') return Badges();
+  if (h === 'mock') return MockPage();
+  if (h === 'mock-r') { const m = Store.data.reading.mock; if (!m || m.stage !== 'r' || !RS[m.v - 1]) return MockPage(); setV(m.v); return Exam('mock', [1, 2, 3, 4, 5, 6, 7]); }
+  if (h === 'mock-w') return MockWriting();
+  if (h === 'mock-s') return MockSpeaking();
   if (h === 'speaking') return SpeakingHub();
   if (h === 'speak-phrases') return SpeakPhrases();
   if (h === 'speak-fav') return SpeakFav();
@@ -318,6 +322,214 @@ function route() {
   Home();
 }
 window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
+
+/* ========== mock exam (everything except Listening) ========== */
+// Official B2 First practice-test conversion (Cambridge, "The Cambridge English Scale explained"):
+// raw score -> Cambridge English Scale. Linear between the published points; 190 is the top reported score.
+const SCALE = {
+  read: { max: 42, pts: [[10, 122], [16, 140], [24, 160], [37, 180], [42, 190]] },
+  uoe: { max: 28, pts: [[7, 122], [11, 140], [18, 160], [24, 180], [28, 190]] },
+  wr: { max: 40, pts: [[10, 122], [16, 140], [24, 160], [34, 180], [40, 190]] },
+  sp: { max: 60, pts: [[14, 122], [24, 140], [36, 160], [54, 180], [60, 190]] }
+};
+function toScale(kind, raw) {
+  const P = SCALE[kind].pts;
+  if (raw <= P[0][0]) return P[0][1];
+  for (let i = 1; i < P.length; i++) if (raw <= P[i][0]) { const [x0, y0] = P[i - 1], [x1, y1] = P[i]; return Math.round(y0 + (raw - x0) * (y1 - y0) / (x1 - x0)); }
+  return 190;
+}
+const gradeOf = s => s >= 180 ? ['Grade A', 'C1', 'ok'] : s >= 173 ? ['Grade B', 'B2', 'ok'] : s >= 160 ? ['Grade C', 'B2', 'ok'] : s >= 140 ? ['Level B1', 'B1', 'mid'] : ['Ниже B1', '—', 'bad'];
+const MOCK_KEY = () => Store.data.reading;
+const mockSt = () => MOCK_KEY().mock || null;
+const saveMock = () => Store.save('reading');
+const wcount = s => (String(s || '').trim().match(/\S+/g) || []).length;
+const MOCK_STEPS = [['r', 'Reading & Use of English', '1 ч 15 мин', 'Все 7 частей одного варианта, общий таймер. Проверяется автоматически.'], ['w', 'Writing', '1 ч 20 мин', 'Эссе + одно задание на выбор из трёх. В конце оцениваешь себя по 4 критериям Cambridge.'], ['s', 'Speaking', '~15 мин', 'Вопросы всех 4 частей с таймером, отвечаешь вслух. Потом самооценка.']];
+const W_CRIT = [
+  ['Content', 'Всё ли из задания раскрыто. 5 — все пункты, читатель полностью понял; 3 — что-то пропущено или неясно; 1 — почти не по заданию.'],
+  ['Communicative Achievement', 'Подходит ли стиль формату и читателю (эссе — нейтральный, письмо другу — неформальный), удерживает ли внимание.'],
+  ['Organisation', 'Абзацы, связки (However, In addition, As a result…), понятная логика от начала до конца.'],
+  ['Language', 'Разнообразие слов и грамматики. Ошибки есть, но не мешают понять — это уже 3.']
+];
+const S_CRIT = [
+  ['Grammar & Vocabulary', 'Разнообразие и точность. 3 — ошибки есть, но не мешают; 5 — сложные конструкции и точные слова.', 2],
+  ['Discourse Management', 'Говорил ли развёрнуто и связно, без долгих пауз, со связками.', 2],
+  ['Pronunciation', 'Понятно ли тебя: ударения, интонация, чёткие звуки.', 2],
+  ['Interactive Communication', 'Начинал, реагировал на партнёра, спрашивал его мнение, договаривался.', 2],
+  ['Global Achievement', 'Общее впечатление: справился ли с заданиями всех частей.', 4]
+];
+const seg6 = (name, val) => '<div class="seg6" role="radiogroup" aria-label="' + esc(name) + '">' + [0, 1, 2, 3, 4, 5].map(i => '<button type="button" role="radio" aria-checked="' + (val === i) + '" class="' + (val === i ? 'on' : '') + '" data-v="' + i + '">' + i + '</button>').join('') + '</div>';
+function bindSeg(onPick) { view.querySelectorAll('.seg6').forEach((g, gi) => g.querySelectorAll('button').forEach(b => b.onclick = () => onPick(gi, +b.dataset.v))); }
+
+function MockPage() {
+  const m = mockSt(), hist = MOCK_KEY().mocks || [];
+  setLast('mock', 'Пробный экзамен');
+  let body = '';
+  if (m && m.stage === 'done') {
+    body = mockResult(m) + '<div class="row" style="display:flex;flex-wrap:wrap;justify-content:center"><button class="btn pri lg" id="mNew">Новый пробный экзамен</button></div>';
+  } else if (m) {
+    const cur = MOCK_STEPS.findIndex(s => s[0] === m.stage);
+    body = '<div class="mock-steps">' + MOCK_STEPS.map(([k, t, d, x], i) => '<div class="card mstep' + (i < cur ? ' done' : i === cur ? ' cur' : '') + '"><span class="mn">' + (i < cur ? ICON.check : i + 1) + '</span><div><h3>' + t + '</h3><p class="muted small">' + d + ' · ' + x + '</p></div></div>').join('') + '</div>' +
+      '<div class="row" style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px"><a class="btn pri lg" href="#mock-' + m.stage + '">Продолжить: ' + MOCK_STEPS[cur][1] + ' →</a><button class="btn lg" id="mReset">Начать заново</button></div>' +
+      '<p class="muted small" style="text-align:center">' + RS[m.v - 1].title + ' · начат ' + new Date(m.t0).toLocaleDateString('ru-RU') + '</p>';
+  } else {
+    const fresh = RS.map((_, i) => i + 1).filter(v => vDone(v) === 0);
+    const pick = fresh[0] || 1;
+    body = '<p class="muted">Как настоящий B2 First, только без Listening: три части подряд, у каждой свой таймер. В конце — примерный балл по шкале Cambridge (как в сертификате: 160 — B2, 180 — C1).</p>' +
+      '<div class="mock-steps">' + MOCK_STEPS.map(([k, t, d, x], i) => '<div class="card mstep"><span class="mn">' + (i + 1) + '</span><div><h3>' + t + ' <span class="muted small">· ' + d + '</span></h3><p class="muted small">' + x + '</p></div></div>').join('') + '</div>' +
+      '<div class="card"><h3 style="margin-bottom:8px">Какой вариант Reading взять?</h3><p class="muted small" style="margin-bottom:12px">Лучше тот, который ты ещё не решал — иначе помнишь ответы и балл будет завышен.</p>' +
+      '<div class="vpick" role="radiogroup">' + RS.map((r, i) => { const v = i + 1, d = vDone(v); return '<button type="button" role="radio" aria-checked="' + (v === pick) + '" class="' + (v === pick ? 'on' : '') + '" data-v="' + v + '"><b>' + esc(r.title) + '</b><span>' + (d ? 'решено частей: ' + d + '/7' : 'ещё не решал') + '</span></button>'; }).join('') + '</div></div>' +
+      '<div class="row" style="display:flex;flex-wrap:wrap;justify-content:center"><button class="btn pri lg" id="mStart">' + ICON.flag + 'Начать пробный экзамен</button></div>';
+  }
+  if (hist.length) body += '<h2>Мои пробные экзамены</h2><div class="card"><table class="wl mock-hist"><thead><tr><th>Дата</th><th>Вариант</th><th>Reading</th><th>UoE</th><th>Writing</th><th>Speaking</th><th>Итог</th></tr></thead><tbody>' +
+    hist.slice().reverse().slice(0, 10).map(h => '<tr><td>' + new Date(h.t).toLocaleDateString('ru-RU') + '</td><td>' + h.v + '</td><td>' + h.sc.read + '</td><td>' + h.sc.uoe + '</td><td>' + h.sc.wr + '</td><td>' + h.sc.sp + '</td><td><b>' + h.overall + '</b> · ' + gradeOf(h.overall)[0] + '</td></tr>').join('') + '</tbody></table></div>';
+  view.innerHTML = '<div class="page narrow"><div class="head"><div><div class="muted small">Всё, кроме Listening</div><h1>Пробный экзамен</h1></div></div>' + body + '</div>';
+  let chosen = view.querySelector('.vpick .on') ? +view.querySelector('.vpick .on').dataset.v : 1;
+  view.querySelectorAll('.vpick button').forEach(b => b.onclick = () => { chosen = +b.dataset.v; view.querySelectorAll('.vpick button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-checked', x === b); }); });
+  if ($('#mStart')) $('#mStart').onclick = () => {
+    MOCK_KEY().mock = { v: chosen, stage: 'r', t0: Date.now(), r: null, w: null, s: null };
+    if (MOCK_KEY().run && MOCK_KEY().run.mode === 'mock') MOCK_KEY().run = null;
+    E = null; saveMock(); location.hash = 'mock-r';
+  };
+  const reset = () => { MOCK_KEY().mock = null; if (MOCK_KEY().run && MOCK_KEY().run.mode === 'mock') MOCK_KEY().run = null; E = null; saveMock(); MockPage(); };
+  if ($('#mReset')) $('#mReset').onclick = () => modal('<h3>Начать пробный экзамен заново?</h3><p class="muted">Текущая попытка будет удалена.</p>', [['Отмена', null], ['Начать заново', reset, 'pri']]);
+  if ($('#mNew')) $('#mNew').onclick = reset;
+}
+function mockScores(m) {
+  const wr = m.w && m.w.self ? m.w.self.e.reduce((a, b) => a + b, 0) + m.w.self.p.reduce((a, b) => a + b, 0) : 0;
+  const sp = m.s && m.s.self ? m.s.self.reduce((a, v, i) => a + v * S_CRIT[i][2], 0) : 0;
+  const raw = { read: m.r.read, uoe: m.r.uoe, wr, sp };
+  const sc = { read: toScale('read', raw.read), uoe: toScale('uoe', raw.uoe), wr: toScale('wr', wr), sp: toScale('sp', sp) };
+  const overall = Math.round((sc.read + sc.uoe + sc.wr + sc.sp) / 4);
+  return { raw, sc, overall };
+}
+function mockResult(m) {
+  const { raw, sc, overall } = mockScores(m), g = gradeOf(overall);
+  const row = (name, k, note) => { const gg = gradeOf(sc[k]); return '<tr><td>' + name + (note ? ' <span class="muted small">' + note + '</span>' : '') + '</td><td>' + raw[k] + ' / ' + SCALE[k].max + '</td><td><b>' + sc[k] + '</b></td><td><span class="gchip ' + gg[2] + '">' + gg[1] + '</span></td></tr>'; };
+  return '<div class="card mock-res"><div class="big-score ' + g[2] + '"><span>' + overall + '</span><div><b>' + g[0] + '</b><span class="muted">уровень ' + g[1] + ' · шкала Cambridge</span></div></div>' +
+    '<table class="wl"><thead><tr><th>Часть</th><th>Баллы</th><th>Шкала</th><th>Уровень</th></tr></thead><tbody>' +
+    row('Reading', 'read') + row('Use of English', 'uoe') + row('Writing', 'wr', '(самооценка)') + row('Speaking', 'sp', '(самооценка)') +
+    '<tr class="muted"><td>Listening</td><td colspan="3">не входит — итог посчитан как среднее 4 частей</td></tr></tbody></table>' +
+    '<p class="muted small">Это примерная оценка: задания не официальные, а Writing и Speaking ты оценил сам. Cambridge советует считать «пограничными» баллы ±3 от порога: 157–163 — ещё не гарантированный B2.</p></div>';
+}
+
+/* writing paper */
+function MockWriting() {
+  if (cleanup) { cleanup(); cleanup = null; }
+  const m = mockSt(); if (!m || m.stage !== 'w') return MockPage();
+  if (!m.w) {
+    const essays = WR.tasks.filter(t => t.fmt === 'essay'), others = shuffle(WR.tasks.filter(t => t.fmt !== 'essay')).slice(0, 3);
+    m.w = { e: essays[Math.floor(Math.random() * essays.length)].id, opts: others.map(t => t.id), p: null, te: '', tp: '', elapsed: 0, done: false, self: null };
+    saveMock();
+  }
+  const w = m.w, T = id => WR.tasks.find(t => t.id === id), F = t => WR.formats.find(f => f.id === t.fmt);
+  setLast('mock-w', 'Пробный экзамен · Writing');
+  if (w.done) return mockWritingSelf(m);
+  let since = Date.now();
+  const left = () => 80 * 60 - (w.elapsed + (Date.now() - since) / 1000);
+  const te = T(w.e);
+  view.innerHTML = '<div class="page" style="max-width:1100px"><div class="head"><div><div class="muted small">Пробный экзамен · шаг 2 из 3</div><h1>Writing</h1></div><div class="timer" id="mwt">' + ICON.clock + '<span>' + fmtTime(left()) + '</span></div></div>' +
+    '<div class="card"><div class="muted small" style="margin-bottom:6px">Part 1 · ' + esc(F(te).name) + ' · обязательно · 140–190 слов</div><div class="task">' + esc(te.text) + '</div></div>' +
+    '<textarea class="essay" id="te" spellcheck="false" placeholder="Пиши эссе здесь. Текст сохраняется автоматически." aria-label="Part 1">' + esc(w.te) + '</textarea><div class="wc muted small" id="wce"></div>' +
+    '<h2>Part 2 · выбери одно задание</h2><div class="p2pick">' + w.opts.map(id => { const t = T(id); return '<button type="button" class="card' + (w.p === id ? ' on' : '') + '" data-p="' + id + '"><span class="muted small">' + esc(F(t).name) + '</span><b>' + esc(t.title) + '</b></button>'; }).join('') + '</div>' +
+    (w.p ? '<div class="card"><div class="muted small" style="margin-bottom:6px">Part 2 · ' + esc(F(T(w.p)).name) + ' · 140–190 слов</div><div class="task">' + esc(T(w.p).text) + '</div></div><textarea class="essay" id="tp" spellcheck="false" placeholder="Пиши здесь." aria-label="Part 2">' + esc(w.tp) + '</textarea><div class="wc muted small" id="wcp"></div>' : '') +
+    '<div class="row" style="display:flex;flex-wrap:wrap;justify-content:center"><button class="btn pri lg" id="mwDone">Закончить Writing →</button></div></div>';
+  const upd = () => { const e = $('#wce'), p = $('#wcp'); if (e) e.textContent = 'Слов: ' + wcount(w.te); if (p) p.textContent = 'Слов: ' + wcount(w.tp); };
+  upd();
+  let saveT;
+  const stampW = () => { w.elapsed += (Date.now() - since) / 1000; since = Date.now(); };
+  const persist = () => { clearTimeout(saveT); saveT = setTimeout(() => { stampW(); saveMock(); }, 1200); };
+  $('#te').oninput = e => { w.te = e.target.value; upd(); persist(); };
+  if ($('#tp')) $('#tp').oninput = e => { w.tp = e.target.value; upd(); persist(); };
+  view.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { if (w.p === b.dataset.p) return; const go = () => { stampW(); w.p = b.dataset.p; w.tp = ''; saveMock(); MockWriting(); }; if (w.tp.trim()) modal('<h3>Сменить задание Part 2?</h3><p class="muted">Текст второго задания будет удалён.</p>', [['Отмена', null], ['Сменить', go, 'pri']]); else go(); });
+  const tick = setInterval(() => { const el = $('#mwt'); if (!el) return; const l = left(); el.lastChild.textContent = l >= 0 ? fmtTime(l) : '−' + fmtTime(-l); el.classList.toggle('late', l < 0); }, 1000);
+  cleanup = () => { clearInterval(tick); clearTimeout(saveT); stampW(); saveMock(); };
+  $('#mwDone').onclick = () => {
+    const finish = () => { stampW(); w.done = true; w.self = { e: [null, null, null, null], p: [null, null, null, null] }; saveMock(); window.scrollTo(0, 0); MockWriting(); };
+    const miss = [];
+    if (wcount(w.te) < 100) miss.push('в эссе меньше 100 слов');
+    if (!w.p) miss.push('не выбрано задание Part 2'); else if (wcount(w.tp) < 100) miss.push('в Part 2 меньше 100 слов');
+    if (miss.length) modal('<h3>Закончить Writing?</h3><p class="muted">Сейчас ' + miss.join(', ') + '. На экзамене короткий текст теряет баллы за Content.</p>', [['Вернуться', null], ['Закончить', finish, 'pri']]);
+    else finish();
+  };
+}
+function mockWritingSelf(m) {
+  const w = m.w, T = id => WR.tasks.find(t => t.id === id);
+  const block = (key, title, text) => '<div class="card selfc"><h3>' + esc(title) + ' <span class="muted small">· ' + wcount(text) + ' слов</span></h3>' +
+    '<details><summary>Показать мой текст</summary><div class="mytext">' + (esc(text) || '<i class="muted">пусто</i>') + '</div></details>' +
+    W_CRIT.map(([n, d], i) => '<div class="crit"><div><b>' + n + '</b><p class="muted small">' + d + '</p></div>' + seg6(title + ': ' + n, w.self[key][i]) + '</div>').join('') + '</div>';
+  view.innerHTML = '<div class="page narrow"><div class="head"><div><div class="muted small">Пробный экзамен · Writing</div><h1>Оцени свои тексты</h1></div></div>' +
+    '<p class="muted">Экзаменатор ставит 0–5 по каждому из 4 критериев, максимум 20 за текст. Оценивай честно — 3 по критерию уже уровень B2. Сомневаешься — ставь ниже.</p>' +
+    block('e', 'Part 1 · ' + T(w.e).title, w.te) + (w.p ? block('p', 'Part 2 · ' + T(w.p).title, w.tp) : '<div class="card muted">Part 2 не выполнена — 0 баллов.</div>') +
+    '<div class="row" style="display:flex;flex-wrap:wrap;justify-content:center"><button class="btn pri lg" id="mwSave">Дальше: Speaking →</button></div></div>';
+  if (!w.p) w.self.p = [0, 0, 0, 0];
+  bindSeg((gi, v) => { const key = gi < 4 ? 'e' : 'p', i = gi % 4; w.self[key][i] = v; saveMock(); const g = view.querySelectorAll('.seg6')[gi]; g.querySelectorAll('button').forEach(b => { b.classList.toggle('on', +b.dataset.v === v); b.setAttribute('aria-checked', +b.dataset.v === v); }); });
+  $('#mwSave').onclick = () => {
+    const empty = [...w.self.e, ...w.self.p].filter(x => x == null).length;
+    if (empty) return modal('<h3>Не все критерии оценены</h3><p class="muted">Осталось: ' + empty + '. Поставь оценку по каждому критерию.</p>', [['Хорошо', null, 'pri']]);
+    m.stage = 's'; saveMock(); location.hash = 'mock-s';
+  };
+}
+
+/* speaking paper */
+function MockSpeaking() {
+  if (cleanup) { cleanup(); cleanup = null; }
+  const m = mockSt(); if (!m || m.stage !== 's') return MockPage();
+  const P = SP.parts;
+  if (!m.s) {
+    const pickN = (arr, n) => shuffle(arr.map((_, i) => i)).slice(0, n);
+    m.s = { pick: { 1: pickN(P[0].questions, 4), 2: pickN(P[1].questions, 1), 3: pickN(P[2].questions, 1), 4: pickN(P[3].questions, 3) }, i: 0, self: null };
+    saveMock();
+  }
+  const s = m.s;
+  setLast('mock-s', 'Пробный экзамен · Speaking');
+  const steps = [];
+  s.pick[1].forEach(i => steps.push({ part: 1, sec: 30, q: P[0].questions[i] }));
+  s.pick[2].forEach(i => { steps.push({ part: 2, sec: 60, q: P[1].questions[i] }); steps.push({ part: 2, sec: 30, q: P[1].questions[i], partner: true }); });
+  s.pick[3].forEach(i => { steps.push({ part: 3, sec: 120, q: P[2].questions[i] }); steps.push({ part: 3, sec: 60, q: P[2].questions[i], decide: true }); });
+  s.pick[4].forEach(i => steps.push({ part: 4, sec: 45, q: P[3].questions[i] }));
+  if (s.i >= steps.length) return mockSpeakingSelf(m);
+  const st = steps[s.i];
+  const art = k => '<figure class="sp-photo">' + ((window.SPEAK_ART || {})[k] || '') + '</figure>';
+  let task;
+  if (st.part === 2 && !st.partner) task = '<div class="sp-q">' + esc(st.q.q) + '</div><div class="sp-photos">' + art(st.q.art[0]) + art(st.q.art[1]) + '</div>';
+  else if (st.part === 2) task = '<p class="muted small">Вопрос «партнёру» про эти же фото — ответь коротко:</p><div class="sp-q big">' + esc(st.q.q2) + '</div>';
+  else if (st.part === 3 && !st.decide) task = '<p class="sp-note">' + esc(st.q.q) + '</p><div class="mind"><div class="mind-c">' + esc(st.q.c) + '</div><div class="mind-p">' + st.q.prompts.map(x => '<span>' + esc(x) + '</span>').join('') + '</div></div><p class="muted small">Нет партнёра? Говори за двоих или попроси друга.</p>';
+  else if (st.part === 3) task = '<p class="muted small">Теперь 1 минута, чтобы договориться:</p><div class="sp-q big">' + esc(st.q.q2) + '</div>';
+  else task = '<div class="sp-q big">' + esc(st.q.q) + '</div>';
+  view.innerHTML = '<div class="page narrow lesson sp">' +
+    '<div class="lesson-top"><a class="x" href="#mock" aria-label="К пробному экзамену">' + ICON.x + '</a><div class="bar" style="--c:var(--c-speaking)"><i style="width:' + (s.i / steps.length * 100).toFixed(1) + '%"></i></div></div>' +
+    '<div class="lesson-meta"><span class="eyebrow">Пробный экзамен · Speaking · Part ' + st.part + ' · ' + (s.i + 1) + ' / ' + steps.length + '</span></div>' +
+    '<div class="spcard"><div class="lbl">' + ICON.mic + 'Говори вслух · ' + (st.sec >= 60 ? st.sec / 60 + ' мин' : st.sec + ' сек') + '</div>' + task +
+    '<div class="stimer" id="stimer"><div class="ring-t"><i id="sbar"></i></div><span id="stxt">' + fmtTime(st.sec) + '</span></div></div>' +
+    '<div class="grades sticky"><button class="btn pri lg" id="snext" style="--accent:var(--c-speaking);--accent-deep:var(--c-speaking-deep)">' + (s.i + 1 < steps.length ? 'Дальше →' : 'Закончить Speaking') + '</button></div></div>';
+  const t0 = Date.now();
+  const tick = setInterval(() => {
+    const el = $('#stxt'); if (!el) return;
+    const l = st.sec - (Date.now() - t0) / 1000;
+    el.textContent = l >= 0 ? fmtTime(l) : 'Время! ' + fmtTime(-l);
+    $('#stimer').classList.toggle('late', l < 0);
+    $('#sbar').style.width = Math.min(100, (1 - l / st.sec) * 100) + '%';
+  }, 250);
+  cleanup = () => clearInterval(tick);
+  $('#snext').onclick = () => { clearInterval(tick); s.i++; saveMock(); window.scrollTo(0, 0); MockSpeaking(); };
+}
+function mockSpeakingSelf(m) {
+  const s = m.s; if (!s.self) { s.self = [null, null, null, null, null]; saveMock(); }
+  view.innerHTML = '<div class="page narrow"><div class="head"><div><div class="muted small">Пробный экзамен · Speaking</div><h1>Оцени, как ты говорил</h1></div></div>' +
+    '<p class="muted">Так оценивают на экзамене: 4 критерия по 0–5 (их баллы удваиваются) и общее впечатление 0–5 (умножается на 4), всего 60. Совет: в следующий раз запиши себя на диктофон и оцени по записи.</p>' +
+    '<div class="card selfc">' + S_CRIT.map(([n, d, k], i) => '<div class="crit"><div><b>' + n + '</b> <span class="muted small">×' + k + '</span><p class="muted small">' + d + '</p></div>' + seg6(n, s.self[i]) + '</div>').join('') + '</div>' +
+    '<div class="row" style="display:flex;flex-wrap:wrap;justify-content:center"><button class="btn pri lg" id="msSave">Посмотреть результат →</button></div></div>';
+  bindSeg((gi, v) => { s.self[gi] = v; saveMock(); view.querySelectorAll('.seg6')[gi].querySelectorAll('button').forEach(b => { b.classList.toggle('on', +b.dataset.v === v); b.setAttribute('aria-checked', +b.dataset.v === v); }); });
+  $('#msSave').onclick = () => {
+    const empty = s.self.filter(x => x == null).length;
+    if (empty) return modal('<h3>Не все критерии оценены</h3><p class="muted">Осталось: ' + empty + '.</p>', [['Хорошо', null, 'pri']]);
+    m.stage = 'done';
+    const { sc, overall } = mockScores(m);
+    (MOCK_KEY().mocks || (MOCK_KEY().mocks = [])).push({ t: Date.now(), v: m.v, sc, overall });
+    saveMock(); location.hash = 'mock';
+    if (overall >= 160) { confetti(); sound('win'); }
+  };
+}
 
 /* ========== speaking ========== */
 const favs = () => Store.data.speaking.fav || (Store.data.speaking.fav = {});
@@ -821,7 +1033,8 @@ function ReadingList() {
   const run = Store.data.reading.run;
   view.innerHTML = '<div class="page"><div class="head"><div><div class="muted small">Reading &amp; Use of English</div><h1>Варианты</h1></div></div>' +
     '<p class="muted">Каждый вариант — полный экзамен: 7 частей, 52 вопроса. Тексты и задания оригинальные, написаны по формату Cambridge B2 First, к каждому ответу есть объяснение.</p>' +
-    (run && !run.checked && RS[(run.v || 1) - 1] ? '<div class="cont"><div><div class="lbl">Незаконченная попытка</div><div style="font-size:18px;font-weight:600;margin-top:4px">Вариант ' + (run.v || 1) + ' · ' + (run.mode === 'full' ? 'весь вариант' : 'Part ' + run.parts[0]) + ' · отвечено ' + Object.keys(run.ans || {}).length + '</div></div><a class="btn" href="#' + (run.mode === 'full' ? rhash('full', run.v || 1) : rhash(run.parts[0], run.v || 1)) + '">Продолжить →</a></div>' : '') +
+    '<a class="card tile" href="#mock" style="--c:var(--accent);flex-direction:row;align-items:center;gap:14px"><span class="sp-star" style="background:var(--accent);box-shadow:0 3px 0 var(--accent-deep)">' + ICON.flag + '</span><div style="flex:1"><h3>Пробный экзамен</h3><p class="muted small">Reading & UoE + Writing + Speaking подряд, итог по шкале Cambridge (160 — B2, 180 — C1)</p></div><span class="go" style="margin:0">→</span></a>' +
+    (run && !run.checked && run.mode !== 'mock' && RS[(run.v || 1) - 1] ? '<div class="cont"><div><div class="lbl">Незаконченная попытка</div><div style="font-size:18px;font-weight:600;margin-top:4px">Вариант ' + (run.v || 1) + ' · ' + (run.mode === 'full' ? 'весь вариант' : 'Part ' + run.parts[0]) + ' · отвечено ' + Object.keys(run.ans || {}).length + '</div></div><a class="btn" href="#' + (run.mode === 'full' ? rhash('full', run.v || 1) : rhash(run.parts[0], run.v || 1)) + '">Продолжить →</a></div>' : '') +
     '<div class="grid2">' + RS.map((r, i) => { const v = i + 1, d = vDone(v); return '<a class="card tile" href="#reading-' + v + '" style="--c:var(--c-reading)"><div class="muted small">' + esc(r.parts.map(p => p.title).filter(Boolean).join(' · ')) + '</div><h3>' + esc(r.title) + '</h3><div class="prog"><div class="bar" style="--c:var(--c-reading)"><i style="width:' + (d / 7 * 100).toFixed(1) + '%"></i></div>' + d + '/7</div><span class="go">' + (d ? (d === 7 ? 'Повторить →' : 'Продолжить →') : 'Начать →') + '</span></a>'; }).join('') + '</div></div>';
   hint('reading');
 }
@@ -831,7 +1044,7 @@ function ReadingHub() {
   view.innerHTML = '<div class="page"><a class="btn sm ghost" href="#reading" style="align-self:flex-start">' + ICON.back + 'Все варианты</a><div class="head"><div><div class="muted small">Reading &amp; Use of English</div><h1>' + esc(R.title) + '</h1></div></div>' +
     '<div class="cont"><div><div class="lbl">Как на экзамене</div><div style="font-size:19px;font-weight:600;margin-top:4px">Решить весь вариант: 7 частей, 52 вопроса, 75 минут</div><div class="small" style="opacity:.85;margin-top:2px">Между частями переключаешься вверху, проверка — в конце.</div></div><a class="btn" href="#' + rhash('full') + '">Решить всё →</a></div>' +
     '<h2>Или выбери одну часть</h2>' +
-        (run && !run.checked && (run.v || 1) === RV ? '<div class="cont"><div><div class="lbl">Незаконченная попытка</div><div style="font-size:18px;font-weight:600;margin-top:4px">' + (run.mode === 'full' ? 'Полный вариант' : 'Part ' + run.parts[0]) + ' · отвечено ' + Object.keys(run.ans || {}).length + '</div></div><a class="btn" href="#' + (run.mode === 'full' ? rhash('full') : rhash(run.parts[0])) + '">Продолжить →</a></div>' : '') +
+        (run && !run.checked && run.mode !== 'mock' && (run.v || 1) === RV ? '<div class="cont"><div><div class="lbl">Незаконченная попытка</div><div style="font-size:18px;font-weight:600;margin-top:4px">' + (run.mode === 'full' ? 'Полный вариант' : 'Part ' + run.parts[0]) + ' · отвечено ' + Object.keys(run.ans || {}).length + '</div></div><a class="btn" href="#' + (run.mode === 'full' ? rhash('full') : rhash(run.parts[0])) + '">Продолжить →</a></div>' : '') +
     '<div class="grid2">' + R.parts.map(p => {
       const r = res[rkey(p.n)];
       const max = p.q.length * PTS[p.n];
@@ -851,11 +1064,11 @@ function Exam(mode, parts) {
   }
   E.since = Date.now();
   document.body.classList.add('exam');
-  setLast(mode === 'full' ? rhash('full') : rhash(parts[0]), 'Reading · ' + R.title + ' · ' + (mode === 'full' ? 'весь вариант' : 'Part ' + parts[0] + ' — ' + partOf(parts[0]).name));
+  if (mode === 'mock') setLast('mock-r', 'Пробный экзамен · Reading & UoE'); else setLast(mode === 'full' ? rhash('full') : rhash(parts[0]), 'Reading · ' + R.title + ' · ' + (mode === 'full' ? 'весь вариант' : 'Part ' + parts[0] + ' — ' + partOf(parts[0]).name));
   const tick = setInterval(() => {
     const el = $('#timer'); if (!el) return;
     const t = E.elapsed + (E.checked ? 0 : (Date.now() - E.since) / 1000);
-    if (E.mode === 'full') { const left = R.minutes * 60 - t; el.lastChild.textContent = left >= 0 ? fmtTime(left) : '−' + fmtTime(-left); el.classList.toggle('late', left < 0); }
+    if (E.mode !== 'part') { const left = R.minutes * 60 - t; el.lastChild.textContent = left >= 0 ? fmtTime(left) : '−' + fmtTime(-left); el.classList.toggle('late', left < 0); }
     else el.lastChild.textContent = fmtTime(t);
   }, 1000);
   const persist = setInterval(() => { if (!E.checked) { stamp(); saveRun(); } }, 20000);
@@ -939,25 +1152,26 @@ function drawExam(keepScroll) {
   const tPane = $('.pane.text'), qPane = $('.pane.qs-pane');
   const sc = keepScroll && tPane ? [tPane.scrollTop, qPane.scrollTop] : null;
   const t = E.elapsed + (E.checked ? 0 : (Date.now() - E.since) / 1000);
-  const timeTxt = E.mode === 'full' ? fmtTime(R.minutes * 60 - t) : fmtTime(t);
+  const timeTxt = E.mode !== 'part' ? fmtTime(R.minutes * 60 - t) : fmtTime(t);
   let result = '';
   if (E.checked) {
     const rows = E.parts.map(n => { const pp = partOf(n), s = partScore(pp); return [n, s]; });
     const tot = rows.reduce((a, [, s]) => a + s.pts, 0), max = rows.reduce((a, [, s]) => a + s.max, 0);
     const s = partScore(p);
-    result = '<div class="result"><b>' + (E.mode === 'full' ? 'Итог: ' + tot + ' из ' + max + ' баллов' : s.c + ' из ' + p.q.length + ' верно · ' + s.pts + '/' + s.max + ' баллов') + '</b>' +
-      (E.mode === 'full' ? '<div class="small">' + rows.map(([n, s]) => 'Part ' + n + ': ' + s.pts + '/' + s.max).join(' · ') + '</div>' : '') +
+    result = '<div class="result"><b>' + (E.mode !== 'part' ? 'Итог: ' + tot + ' из ' + max + ' баллов' : s.c + ' из ' + p.q.length + ' верно · ' + s.pts + '/' + s.max + ' баллов') + '</b>' +
+      (E.mode !== 'part' ? '<div class="small">' + rows.map(([n, s]) => 'Part ' + n + ': ' + s.pts + '/' + s.max).join(' · ') + '</div>' : '') +
       (E.xpGain != null ? '<span class="xpgain">' + ICON.bolt + '+' + E.xpGain + ' XP — по баллам Cambridge</span>' : '') +
       '<div class="small">Разбери объяснения к каждому вопросу ниже' + (p.kind === 'mc-text' || p.kind === 'matching' ? ', а фразы-доказательства подсвечены в тексте' : '') + '.</div>' +
-      '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="retry">Пройти заново</button><a class="btn sm ghost" href="#' + rhash('hub') + '">К списку частей</a></div></div>';
+      (E.mode === 'mock' ? (() => { const m = Store.data.reading.mock; return m && m.r ? '<div class="small"><b>Reading</b> (части 1, 5, 6, 7): ' + m.r.read + '/42 → ' + toScale('read', m.r.read) + ' · <b>Use of English</b> (части 2, 3, 4): ' + m.r.uoe + '/28 → ' + toScale('uoe', m.r.uoe) + ' по шкале Cambridge</div>' : ''; })() + '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm pri" href="#mock-w">Дальше: Writing →</a><a class="btn sm ghost" href="#mock">К пробному экзамену</a></div></div>'
+      : '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="retry">Пройти заново</button><a class="btn sm ghost" href="#' + rhash('hub') + '">К списку частей</a></div></div>');
   }
   const sentList = p.kind === 'gapped' ? '<div class="sents">' + Object.entries(p.sents).map(([k, s]) => '<div class="' + (!E.checked && Object.values(E.ans).includes(k) ? 'used' : '') + '"><b>' + k + '</b> ' + esc(s) + '</div>').join('') + '</div>' : '';
   view.innerHTML =
-    '<header class="ex-head"><a class="btn sm ghost" href="#' + rhash('hub') + '">' + ICON.back + 'Выйти</a>' +
-    '<span class="title">' + esc(R.title) + ' · ' + 'Part ' + p.n + ' · ' + esc(p.name) + '</span>' +
-    (E.mode === 'full' ? '<div class="ptabs" aria-label="Части">' + E.parts.map((n, i) => '<button type="button" data-part="' + i + '" class="' + (i === E.cur ? 'on' : '') + '"><span class="pw">Part </span>' + n + '</button>').join('') + '</div>'
+    '<header class="ex-head"><a class="btn sm ghost" href="#' + (E.mode === 'mock' ? 'mock' : rhash('hub')) + '">' + ICON.back + 'Выйти</a>' +
+    '<span class="title">' + (E.mode === 'mock' ? 'Пробный экзамен · ' : '') + esc(R.title) + ' · ' + 'Part ' + p.n + ' · ' + esc(p.name) + '</span>' +
+    (E.mode !== 'part' ? '<div class="ptabs" aria-label="Части">' + E.parts.map((n, i) => '<button type="button" data-part="' + i + '" class="' + (i === E.cur ? 'on' : '') + '"><span class="pw">Part </span>' + n + '</button>').join('') + '</div>'
       : '<div class="ptabs" aria-label="Другие части">' + R.parts.map(pp => '<a class="pt' + (pp.n === p.n ? ' on' : '') + '" href="#' + rhash(pp.n) + '"><span class="pw">Part </span>' + pp.n + '</a>').join('') + '<a class="pt" href="#' + rhash('full') + '">Все</a></div>') +
-    '<span class="sp"></span><div class="timer" id="timer" title="' + (E.mode === 'full' ? 'Осталось времени' : 'Прошло времени') + '">' + ICON.clock + '<span>' + timeTxt + '</span></div>' +
+    '<span class="sp"></span><div class="timer" id="timer" title="' + (E.mode !== 'part' ? 'Осталось времени' : 'Прошло времени') + '">' + ICON.clock + '<span>' + timeTxt + '</span></div>' +
     (E.checked ? '' : '<button class="btn sm pri" id="check">Проверить</button>') + '</header>' +
     '<div class="mtabs"><button type="button" data-tab="t" class="' + (E.tab === 't' ? 'on' : '') + '">Текст</button><button type="button" data-tab="q" class="' + (E.tab === 'q' ? 'on' : '') + '">Вопросы</button></div>' +
     '<div class="split"><section class="pane text' + (E.tab === 't' ? ' show' : '') + '" aria-label="Текст">' + textPane(p) + '</section>' +
@@ -1014,6 +1228,10 @@ function doCheck() {
   let pts = 0, max = 0;
   for (const n of E.parts) { const s = partScore(partOf(n)); pts += s.pts; max += s.max; const k = rkey(n), prev = res[k]; res[k] = { best: Math.max(prev ? prev.best : 0, s.pts), last: s.pts, max: s.max, t: Date.now() }; }
   E.xpGain = pts;
+  if (E.mode === 'mock' && Store.data.reading.mock && Store.data.reading.mock.stage === 'r') {
+    const sec = ns => ns.reduce((a, n) => a + partScore(partOf(n)).pts, 0);
+    Object.assign(Store.data.reading.mock, { r: { read: sec([1, 5, 6, 7]), uoe: sec([2, 3, 4]) }, stage: 'w' });
+  }
   saveRun(); Store.save('reading');
   E.qcur = partOf(E.parts[E.cur]).q[0].n;
   drawExam();
