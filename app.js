@@ -278,10 +278,10 @@ function renderNav(h) {
     ['s', 'Reading & Use of English'], ['a', RS.length > 1 ? 'Варианты 1–' + RS.length : 'Вариант 1', 'reading', W ? allDone() + '/' + RS.length * 7 : '', 'book', '--c-reading'],
     ['s', 'Writing'], ['a', 'Шпаргалки', 'writing', '', 'sheet', '--c-writing'], ['a', WRITE_LABEL, 'write', '', 'pen', '--c-writing'],
     ['s', 'Speaking'], ['a', 'Фразы и части', 'speaking', '', 'mic', '--c-speaking'], ['a', 'Мои фразы', 'speak-fav', String(Object.keys(Store.data.speaking.fav || {}).length || ''), 'star', '--c-speaking'],
-    ['s', 'Прогресс'], ['a', 'Пробный экзамен', 'mock', Store.data.reading.mock && Store.data.reading.mock.stage !== 'done' ? '…' : '', 'flag', '--accent'], ['a', 'Достижения', 'badges', got + '/' + BADGES.length, 'medal', '--gold-deep']
+    ['s', 'Прогресс'], ['a', 'Пробный экзамен', 'mock', Store.data.reading.mock && Store.data.reading.mock.stage !== 'done' ? '…' : '', 'flag', '--accent'], ['a', 'Мои ошибки', 'mistakes', W && RS.length ? String(mistDue() || '') : '', 'x', '--bad'], ['a', 'Достижения', 'badges', got + '/' + BADGES.length, 'medal', '--gold-deep']
   ];
   $('#nav').innerHTML = items.map(it => it[0] === 's' ? '<div class="nav-h">' + esc(it[1]) + '</div>'
-    : '<a href="#' + it[2] + '" class="' + ((h === it[2] || (it[2] === 'write' && h.startsWith('write-')) || (it[2] === 'writing' && h.startsWith('fmt-')) || (it[2] === 'speaking' && h.startsWith('speak-') && h !== 'speak-fav') || (it[2] === 'mock' && h.startsWith('mock-')) || (it[2] === 'reading' && (h.startsWith('part-') || h === 'full-test' || /^(reading-|v\d-)/.test(h)))) ? 'on' : '') + '"><span class="ni" style="--c:var(' + it[5] + ')">' + ICON[it[4]] + '</span><span class="lb">' + esc(it[1]) + '</span>' + (it[3] ? '<span class="cnt">' + esc(it[3]) + '</span>' : '') + '</a>').join('');
+    : '<a href="#' + it[2] + '" class="' + ((h === it[2] || (it[2] === 'write' && h.startsWith('write-')) || (it[2] === 'writing' && h.startsWith('fmt-')) || (it[2] === 'speaking' && h.startsWith('speak-') && h !== 'speak-fav') || (it[2] === 'mock' && h.startsWith('mock-')) || (it[2] === 'mistakes' && h === 'mistakes-r') || (it[2] === 'reading' && (h.startsWith('part-') || h === 'full-test' || /^(reading-|v\d-)/.test(h)))) ? 'on' : '') + '"><span class="ni" style="--c:var(' + it[5] + ')">' + ICON[it[4]] + '</span><span class="lb">' + esc(it[1]) + '</span>' + (it[3] ? '<span class="cnt">' + esc(it[3]) + '</span>' : '') + '</a>').join('');
   renderHud();
 }
 
@@ -307,6 +307,8 @@ function route() {
   if (h === 'full-test') { setV(1); return Exam('full', [1, 2, 3, 4, 5, 6, 7]); }
   if (h === 'writing') return WritingHub();
   if (h === 'badges') return Badges();
+  if (h === 'mistakes') return MistakesPage();
+  if (h === 'mistakes-r') return MR.queue.length ? MistReview() : MistakesPage();
   if (h === 'mock') return MockPage();
   if (h === 'mock-r') { const m = Store.data.reading.mock; if (!m || m.stage !== 'r' || !RS[m.v - 1]) return MockPage(); setV(m.v); return Exam('mock', [1, 2, 3, 4, 5, 6, 7]); }
   if (h === 'mock-w') return MockWriting();
@@ -322,6 +324,84 @@ function route() {
   Home();
 }
 window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
+
+/* ========== my mistakes (Reading & UoE + words) ========== */
+// Reading: a wrong answer comes back after 1 day, then after 3 days; two correct answers in a row fix it.
+const wrongs = () => Store.data.reading.wrong || (Store.data.reading.wrong = {});
+const SETS = [['up', 'Upgrade'], ['nb', 'Тетрадь'], ['b2', 'Словарь A–Z']];
+function noteResult(v, part, qn, right) {
+  const all = wrongs(), key = v + ':' + qn, it = all[key], now = Date.now();
+  if (!right) all[key] = { v, part, n: qn, t: it ? it.t : now, due: now + DAY, ok: 0, fixed: false, miss: (it ? it.miss || 0 : 0) + 1 };
+  else if (it && !it.fixed) { it.ok = (it.ok || 0) + 1; if (it.ok >= 2) { it.fixed = true; it.fixedAt = now; } else it.due = now + 3 * DAY; }
+}
+const openWrongs = () => Object.entries(wrongs()).filter(([, it]) => !it.fixed && RS[it.v - 1]);
+const dueWrongs = () => openWrongs().filter(([, it]) => it.due <= Date.now());
+const wordMistakes = () => W ? SETS.reduce((a, [k]) => a + mistakes(k).length, 0) : 0;
+const mistDue = () => (RS.length ? dueWrongs().length : 0) + wordMistakes();
+const whenTxt = t => { const d = Math.ceil((t - Date.now()) / DAY); return d <= 0 ? 'сегодня' : d === 1 ? 'завтра' : 'через ' + d + ' ' + plural(d, 'день', 'дня', 'дней'); };
+const PART_SHORT = { 1: 'Выбор слова', 2: 'Пропуск', 3: 'Словообразование', 4: 'Трансформация', 5: 'Вопрос к тексту', 6: 'Пропущенное предложение', 7: 'Кто это сказал' };
+function MistakesPage() {
+  const open = openWrongs(), due = dueWrongs(), fixed = Object.values(wrongs()).filter(it => it.fixed).length, wm = wordMistakes();
+  const rows = open.sort((a, b) => a[1].due - b[1].due).map(([k, it]) => { const p = RS[it.v - 1].parts[it.part - 1]; return '<tr><td>' + esc(RS[it.v - 1].title) + '</td><td>Part ' + it.part + ' · ' + PART_SHORT[it.part] + '</td><td>' + it.n + '</td><td>' + (it.ok ? '1 из 2 ✓' : '—') + '</td><td>' + whenTxt(it.due) + '</td></tr>'; }).join('');
+  view.innerHTML = '<div class="page narrow"><div class="head"><div><div class="muted small">Прогресс</div><h1>Мои ошибки</h1></div></div>' +
+    '<p class="muted">Сюда сами попадают неправильные ответы из Reading &amp; Use of English и слова, которые ты не вспомнил. Ошибка возвращается через 1 день, потом через 3. Ответишь правильно два раза подряд — она исправлена.</p>' +
+    '<div class="bigstats"><div class="card"><span class="muted small">К повтору сейчас</span><b>' + (due.length + wm) + '</b></div><div class="card"><span class="muted small">Всего в списке</span><b>' + (open.length + wm) + '</b></div><div class="card"><span class="muted small">Исправлено</span><b style="color:var(--ok-ink)">' + fixed + '</b></div></div>' +
+    '<section class="card mist-sec" style="--c:var(--c-reading)"><div class="mist-h"><div><h3>Reading &amp; Use of English</h3><p class="muted small">' + (open.length ? due.length + ' к повтору сейчас · ' + open.length + ' всего' : 'Ошибок нет — реши любую часть, и неверные ответы появятся здесь.') + '</p></div>' +
+    (due.length ? '<button class="btn pri" id="mrGo">Повторить · ' + due.length + '</button>' : open.length ? '<button class="btn" id="mrAll">Повторить досрочно · ' + open.length + '</button>' : '<a class="btn" href="#reading">К вариантам</a>') + '</div>' +
+    (rows ? '<table class="wl"><thead><tr><th>Вариант</th><th>Задание</th><th>№</th><th>Прогресс</th><th>Повтор</th></tr></thead><tbody>' + rows + '</tbody></table>' : '') + '</section>' +
+    '<section class="card mist-sec" style="--c:var(--c-words)"><div class="mist-h"><div><h3>Слова</h3><p class="muted small">' + (wm ? 'Слова уходят из списка, когда ты снова их выучишь в карточках.' : 'Пока пусто — сюда попадают слова, на которых ты нажал «Не вспомнил» или ошибся в тесте.') + '</p></div></div>' +
+    (wm ? '<div class="mist-words">' + SETS.map(([k, n]) => { const c = mistakes(k).length; return c ? '<div class="mw"><span><b>' + n + '</b> · ' + c + ' ' + plural(c, 'слово', 'слова', 'слов') + '</span><button class="btn sm" data-mw="' + k + '">Повторить карточками</button></div>' : ''; }).join('') + '</div>' : '') + '</section></div>';
+  if ($('#mrGo')) $('#mrGo').onclick = () => startMistReview(due.map(([k]) => k));
+  if ($('#mrAll')) $('#mrAll').onclick = () => startMistReview(open.map(([k]) => k));
+  view.querySelectorAll('[data-mw]').forEach(b => b.onclick = () => { const set = b.dataset.mw; WS.set = set; WS.sess = null; WS.test = null; startCards(set, 'mist'); location.hash = 'words-' + set; });
+}
+const MR = { queue: [], i: 0, ans: null, checked: false, right: 0 };
+function startMistReview(keys) { Object.assign(MR, { queue: shuffle(keys), i: 0, ans: null, checked: false, right: 0 }); location.hash = 'mistakes-r'; if ((location.hash || '') === '#mistakes-r') MistReview(); }
+function gapSentence(p, qn, blank) {
+  const para = p.paras.find(x => x.includes('[[' + qn + ']]')) || '';
+  const sents = para.split(/(?<=[.!?…'’])\s+(?=[A-Z'‘(\[])/);
+  const sIdx = sents.findIndex(x => x.includes('[[' + qn + ']]'));
+  const ctx = sents.slice(Math.max(0, sIdx - 1), sIdx + 1).join(' ');
+  return esc(ctx).replace(/\[\[(\d+)\]\]/g, (_, k) => +k === qn ? blank : '…');
+}
+function MistReview() {
+  if (!MR.queue.length) { location.hash = 'mistakes'; return; }
+  if (MR.i >= MR.queue.length) {
+    view.innerHTML = '<div class="page narrow"><div class="done"><div class="trophy">' + ICON.trophy + '</div><h1>Повтор закончен</h1><p class="muted">Верно: ' + MR.right + ' из ' + MR.queue.length + '. Ошибки, на которые ты ответил неверно, вернутся завтра.</p>' +
+      '<div class="actions"><a class="btn pri lg" href="#mistakes">К моим ошибкам</a></div></div></div>';
+    if (MR.right === MR.queue.length && MR.right >= 3) { confetti(); sound('win'); }
+    return;
+  }
+  const it = wrongs()[MR.queue[MR.i]];
+  if (!it || !RS[it.v - 1]) { MR.i++; return MistReview(); }
+  const p = RS[it.v - 1].parts[it.part - 1], q = p.q.find(x => x.n === it.n), C = MR.checked, v = MR.ans;
+  const optBtns = (labels, keys) => '<div class="mr-opts">' + labels.map((l, i) => { const k = keys[i]; let c = ''; if (C) c = isRight(p, q, k) ? ' ok' : (String(v) === String(k) ? ' bad' : ' dim'); else if (String(v) === String(k)) c = ' sel'; return '<button type="button" class="opt' + c + '" data-k="' + esc(String(k)) + '"' + (C ? ' disabled' : '') + '>' + l + '</button>'; }).join('') + '</div>';
+  const input = '<input class="mr-in" id="mrIn" autocomplete="off" autocapitalize="off" spellcheck="false" value="' + esc(v || '') + '"' + (C ? ' disabled' : '') + ' aria-label="Ответ">';
+  let body = '';
+  if (p.kind === 'mc') body = '<p class="mr-ctx">' + gapSentence(p, q.n, '<span class="gapb">' + q.n + '</span>') + '</p>' + optBtns(q.opts.map((o, i) => '<b>' + 'ABCD'[i] + '</b> ' + esc(o)), [0, 1, 2, 3]);
+  else if (p.kind === 'open' || p.kind === 'wf') body = '<p class="mr-ctx">' + gapSentence(p, q.n, '<span class="gapb">' + q.n + '</span>') + '</p>' + (q.w ? '<p class="muted small">Слово: <b class="mr-w">' + esc(q.w) + '</b></p>' : '<p class="muted small">Впиши одно слово.</p>') + input;
+  else if (p.kind === 'kwt') body = '<p class="mr-ctx">' + esc(q.first) + '</p><p class="mr-key">' + esc(q.key) + '</p><p class="mr-kwt">' + esc(q.before) + ' ' + input + ' ' + esc(q.after) + '</p><p class="muted small">2–5 слов, включая ' + esc(q.key) + '.</p>';
+  else if (p.kind === 'mc-text') body = '<details class="mr-text" open><summary>Отрывок из текста «' + esc(p.title) + '»</summary><p>' + esc(p.paras[q.p]) + '</p></details><p class="mr-stem">' + esc(q.stem) + '</p>' + optBtns(q.opts.map((o, i) => '<b>' + 'ABCD'[i] + '</b> ' + esc(o)), [0, 1, 2, 3]);
+  else if (p.kind === 'gapped') { const para = p.paras.find(x => x.includes('[[' + q.n + ']]')); body = '<p class="mr-ctx">' + esc(para).replace(/\[\[(\d+)\]\]/g, (_, k) => +k === q.n ? '<span class="gapb">' + q.n + '</span>' : '…') + '</p><p class="muted small">Какое предложение стоит на месте пропуска?</p>' + optBtns(Object.entries(p.sents).map(([k, t]) => '<b>' + k + '</b> ' + esc(t)), Object.keys(p.sents)); }
+  else if (p.kind === 'matching') body = '<p class="mr-stem">Which person ' + esc(q.stem) + '</p>' + p.texts.map(t => '<details class="mr-text"><summary>' + t.k + ' — ' + esc(t.name) + '</summary><p>' + esc(t.body) + '</p></details>').join('') + optBtns(p.texts.map(t => '<b>' + t.k + '</b> ' + esc(t.name)), p.texts.map(t => t.k));
+  const fb = C ? '<div class="mr-fb ' + (isRight(p, q, v) ? 'ok' : 'bad') + '"><b>' + (isRight(p, q, v) ? (it.fixed ? 'Верно! Ошибка исправлена' : 'Верно! Ещё один правильный ответ — и она исправлена') : 'Пока нет. Правильно: ' + esc(answerText(p, q))) + '</b><p>' + q.expl + '</p></div>' : '';
+  view.innerHTML = '<div class="page narrow lesson">' +
+    '<div class="lesson-top"><a class="x" href="#mistakes" aria-label="К моим ошибкам">' + ICON.x + '</a><div class="bar" style="--c:var(--c-reading)"><i style="width:' + (MR.i / MR.queue.length * 100).toFixed(1) + '%"></i></div></div>' +
+    '<div class="lesson-meta"><span class="eyebrow">' + esc(RS[it.v - 1].title) + ' · Part ' + it.part + ' · ' + PART_SHORT[it.part] + ' · ' + (MR.i + 1) + ' / ' + MR.queue.length + '</span></div>' +
+    '<div class="spcard mr">' + body + fb + '</div>' +
+    '<div class="grades sticky">' + (C ? '<button class="btn pri lg" id="mrNext">Дальше →</button>' : '<button class="btn pri lg" id="mrCheck"' + (v == null || v === '' ? ' disabled' : '') + '>Проверить</button>') + '</div></div>';
+  view.querySelectorAll('.mr-opts .opt').forEach(b => b.onclick = () => { const k = b.dataset.k; MR.ans = /^\d$/.test(k) && (p.kind === 'mc' || p.kind === 'mc-text') ? +k : k; MistReview(); });
+  const inp = $('#mrIn');
+  if (inp && !C) { inp.oninput = () => { MR.ans = inp.value; $('#mrCheck').disabled = !inp.value.trim(); }; inp.onkeydown = e => { if (e.key === 'Enter' && inp.value.trim()) $('#mrCheck').click(); }; if (!matchMedia('(pointer:coarse)').matches) inp.focus(); }
+  if ($('#mrCheck')) $('#mrCheck').onclick = () => {
+    const right = isRight(p, q, MR.ans);
+    noteResult(it.v, it.part, it.n, right); Store.save('reading');
+    MR.checked = true; if (right) { MR.right++; sound('ok'); } else sound('bad');
+    MistReview(); renderNav('mistakes-r');
+    if (right) addXP(1, $('.mr-fb b'));
+  };
+  if ($('#mrNext')) { $('#mrNext').onclick = () => { MR.i++; MR.ans = null; MR.checked = false; MistReview(); window.scrollTo(0, 0); }; $('#mrNext').focus(); }
+}
 
 /* ========== mock exam (everything except Listening) ========== */
 // Official B2 First practice-test conversion (Cambridge, "The Cambridge English Scale explained"):
@@ -1228,6 +1308,7 @@ function doCheck() {
   let pts = 0, max = 0;
   for (const n of E.parts) { const s = partScore(partOf(n)); pts += s.pts; max += s.max; const k = rkey(n), prev = res[k]; res[k] = { best: Math.max(prev ? prev.best : 0, s.pts), last: s.pts, max: s.max, t: Date.now() }; }
   E.xpGain = pts;
+  for (const n of E.parts) { const pp = partOf(n); for (const q of pp.q) { const a = E.ans[q.n]; if (a != null && a !== '') noteResult(RV, n, q.n, isRight(pp, q, a)); } }
   if (E.mode === 'mock' && Store.data.reading.mock && Store.data.reading.mock.stage === 'r') {
     const sec = ns => ns.reduce((a, n) => a + partScore(partOf(n)).pts, 0);
     Object.assign(Store.data.reading.mock, { r: { read: sec([1, 5, 6, 7]), uoe: sec([2, 3, 4]) }, stage: 'w' });
