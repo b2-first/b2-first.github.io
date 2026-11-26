@@ -244,7 +244,7 @@ function checkBadges(silent) {
 
 /* ========== data ========== */
 let W = null, R = null, WR = null, SP = null, RS = [], RV = 1;
-const READING_FILES = ['reading', 'reading-2'];
+const READING_FILES = ['reading', 'reading-2', 'reading-3'];
 async function loadData() {
   const get = u => fetch(u).then(r => { if (!r.ok) throw new Error(u); return r.json(); });
   [W, WR, SP, ...RS] = await Promise.all([get('data/words.json'), get('data/writing.json'), get('data/speaking.json'), ...READING_FILES.map(f => get('data/' + f + '.json'))]);
