@@ -753,3 +753,6 @@ ul.ls.bad li::marker{color:var(--bad)}
 .mr-fb p{margin:6px 0 0;color:var(--ink);font-size:15px}
 .mr-opts .opt.sel{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 4px 0 color-mix(in oklch,var(--accent) 40%,var(--line))}
 .mist-sec td:first-child,.mist-sec td:nth-child(5){white-space:nowrap}
+.card.ttl{display:flex;flex-direction:column;gap:6px;border-left:6px solid var(--c-writing)}
+.card.ttl .ttl-b{font-weight:800;color:var(--c-writing)}
+.card.ttl p{margin:0}

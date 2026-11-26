@@ -1,6 +1,6 @@
 {
  "about": [
-  "Speaking сдают <b>вдвоём</b> с другим кандидатом, длится около <b>14 минут</b>. В комнате два экзаменатора: один задаёт вопросы, второй только слушает и ставит оценки.",
+  "Speaking сдают <b>вдвоём</b> с другим кандидатом, длится около <b>14 минут</b>. В комнате два экзаменатора: один ведёт разговор и ставит общую оценку, второй только слушает и оценивает подробно по 4 критериям.",
   "Оценивают 4 критерия: <b>Grammar &amp; Vocabulary</b> (точность и разнообразие), <b>Discourse Management</b> (связно ли и достаточно ли длинно ты говоришь), <b>Pronunciation</b> (понятно ли тебя), <b>Interactive Communication</b> (как ты общаешься с партнёром).",
   "Главное правило: <b>отвечай развёрнуто</b>. Ответ + причина + пример — и ты уже звучишь на B2. Одно слово «Yes» — почти ноль баллов.",
   "Не учи готовые ответы наизусть: экзаменаторы это слышат. Учи <b>фразы-связки</b> — они подходят к любому вопросу."
@@ -482,7 +482,7 @@
      "topic": "Свободное время",
      "q": "Compare the photographs and say why people might choose to spend their free time in these places.",
      "q2": "Which of these places would you like to spend a day in? Why?",
-     "a": "[[Both pictures show]] people relaxing in their free time, but the atmosphere is completely different. [[In the first picture]], a family is having a picnic in a quiet park, [[whereas in the second]] there's a huge crowd at an outdoor music festival. [[I'd imagine that]] the family chose the park because it's peaceful and they can spend time together without any distractions. [[They might also]] want to save money. [[Unlike the people in the first photo]], the people at the festival are looking for excitement. [[Judging by their faces]], they're having an amazing time — [[they must be]] fans of the band. A festival is a great way to meet new people and see your favourite artists live. [[However]], it can be very noisy and tiring. [[Overall, I'd say]] it depends on whether you want to relax or have fun."
+     "a": "[[Both pictures show]] people relaxing in their free time, but the atmosphere is completely different. [[In the first picture]], a family is having a picnic in a quiet park, [[whereas in the second]] there's a huge crowd at an outdoor music festival. [[I'd imagine that]] the family chose the park because it's peaceful, and they can spend time together without any distractions. [[They might also]] want to save money. [[Unlike the people in the first photo]], the people at the festival are looking for excitement. [[Judging by their faces]], they're having an amazing time — [[they must be]] fans of the band. A festival is a great way to meet new people and see your favourite artists live. [[However]], it can be very noisy and tiring. [[Overall, I'd say]] it depends on whether you want to relax or have fun."
     },
     {
      "art": [
@@ -502,7 +502,7 @@
      "topic": "Еда",
      "q": "Compare the photographs and say why people might choose to eat in these different ways.",
      "q2": "Do you prefer eating at home or in a restaurant? Why?",
-     "a": "[[Both pictures show]] people having a meal together. [[In the first picture]], a family is cooking at home, [[whereas in the second]] a group of friends is eating in a restaurant. [[It looks as if]] the family is having a lot of fun — even the child is helping. People might choose to cook at home because it's healthier and much cheaper. [[Apart from that]], cooking together can bring a family closer. [[Unlike the family in the first photo]], the friends in the restaurant don't have to do any work. [[They might be]] celebrating something, like a birthday. Eating out is more convenient and you can try dishes you can't make yourself. [[However]], it can be quite expensive. [[So, all in all]], I think it depends on the occasion."
+     "a": "[[Both pictures show]] people having a meal together. [[In the first picture]], a family is cooking at home, [[whereas in the second]] a group of friends is eating in a restaurant. [[It looks as if]] the family is having a lot of fun — even the child is helping. People might choose to cook at home because it's healthier and much cheaper. [[Apart from that]], cooking together can bring a family closer. [[Unlike the family in the first photo]], the friends in the restaurant don't have to do any work. [[They might be]] celebrating something, like a birthday. Eating out is more convenient, and you can try dishes you can't make yourself. [[However]], it can be quite expensive. [[So, all in all]], I think it depends on the occasion."
     }
    ]
   },
@@ -838,7 +838,7 @@
      "a": [
       [
        "A",
-       "[[Shall we start with]] shopping? Nowadays you can buy almost anything online without leaving your house."
+       "[[Shall we start with]] shopping? Nowadays, you can buy almost anything online without leaving your house."
       ],
       [
        "B",
@@ -1021,7 +1021,7 @@
     {
      "topic": "Технологии",
      "q": "Some people say we rely too much on technology. What do you think?",
-     "a": "[[I'd agree to some extent]]. [[Take]] navigation [[for example]] — hardly anyone can read a paper map anymore. If the internet stopped working for a day, [[I think people would]] panic! [[On the other hand]], technology makes our lives so much easier. [[It's a double-edged sword]], really."
+     "a": "[[I'd agree to some extent]]. [[Take]] navigation [[for example]] — hardly anyone can read a paper map any more. If the internet stopped working for a day, [[I think people would]] panic! [[On the other hand]], technology makes our lives so much easier. [[It's a double-edged sword]], really."
     },
     {
      "topic": "Свободное время",

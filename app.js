@@ -497,7 +497,7 @@ function MockWriting() {
   if (cleanup) { cleanup(); cleanup = null; }
   const m = mockSt(); if (!m || m.stage !== 'w') return MockPage();
   if (!m.w) {
-    const essays = WR.tasks.filter(t => t.fmt === 'essay'), others = shuffle(WR.tasks.filter(t => t.fmt !== 'essay')).slice(0, 3);
+    const essays = WR.tasks.filter(t => t.fmt === 'essay'), others = shuffle(WR.tasks.filter(t => t.fmt !== 'essay' && t.fmt !== 'story')).slice(0, 3); // B2 First Part 2: article, email/letter, report, review
     m.w = { e: essays[Math.floor(Math.random() * essays.length)].id, opts: others.map(t => t.id), p: null, te: '', tp: '', elapsed: 0, done: false, self: null };
     saveMock();
   }
@@ -1345,6 +1345,7 @@ function Sheet(id) {
   view.innerHTML = '<div class="page"><a class="btn sm ghost" href="#writing" style="align-self:flex-start">' + ICON.back + 'Все форматы</a>' +
     '<div class="head"><div><div class="muted small">' + esc(f.part) + '</div><h1>' + esc(f.name) + '</h1></div>' + tasks.map(t => '<a class="btn pri" href="#write-' + t.id + '">Потренироваться: ' + esc(t.title) + '</a>').join('') + '</div>' +
     '<div class="grid2"><div class="card"><b>Стиль</b><p class="muted" style="margin-top:4px">' + esc(f.style) + '</p></div><div class="card"><b>Когда</b><p class="muted" style="margin-top:4px">' + esc(f.when) + '</p></div></div>' +
+    (f.title ? '<div class="card ttl"><span class="ttl-b">Заголовок: ' + esc(f.title[0]) + '</span><p>' + esc(f.title[1]) + '</p></div>' : '') +
     '<div class="sheet"><div><h2 style="margin-bottom:10px">Структура</h2><div class="steps">' + f.structure.map(s => '<div><b>' + esc(s[0]) + '</b><span>' + esc(s[1]) + '</span></div>').join('') + '</div></div>' +
     '<div><h2 style="margin-bottom:10px">Полезные фразы</h2><div class="phr">' + f.phrases.map(s => '<div class="card"><b>' + esc(s[0]) + '</b><span class="serif">' + esc(s[1]) + '</span></div>').join('') + '</div></div>' +
     '<div class="card"><h2 style="margin-bottom:10px">Типичные ошибки</h2><ul class="ls">' + f.mistakes.map(m => '<li>' + esc(m) + '</li>').join('') + '</ul></div></div></div>';
