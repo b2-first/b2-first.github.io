@@ -226,7 +226,7 @@ function badgeStats() {
     letter: W && groupsOf('b2').some(g => { const ws = setWords('b2', g.g); return ws.length && ws.every(isL); }) ? 1 : 0,
     streak: Math.max(streak(), bestStreak()),
     goal: Object.values(xpLog()).some(v => v >= goalXP()) ? 1 : 0,
-    parts: Object.keys(res).length,
+    parts: RS.length ? Math.max(...RS.map((_, i) => vDone(i + 1))) : Object.keys(res).length,
     texts: hist.length,
     bestText: hist.reduce((a, h) => Math.max(a, h.total || 0), 0)
   };
@@ -243,10 +243,12 @@ function checkBadges(silent) {
 }
 
 /* ========== data ========== */
-let W = null, R = null, WR = null, SP = null;
+let W = null, R = null, WR = null, SP = null, RS = [], RV = 1;
+const READING_FILES = ['reading', 'reading-2'];
 async function loadData() {
   const get = u => fetch(u).then(r => { if (!r.ok) throw new Error(u); return r.json(); });
-  [W, R, WR, SP] = await Promise.all([get('data/words.json'), get('data/reading.json'), get('data/writing.json'), get('data/speaking.json')]);
+  [W, WR, SP, ...RS] = await Promise.all([get('data/words.json'), get('data/writing.json'), get('data/speaking.json'), ...READING_FILES.map(f => get('data/' + f + '.json'))]);
+  R = RS[0];
   W.byId = {}; for (const w of W.words) W.byId[w.id] = w;
 }
 
@@ -273,13 +275,13 @@ function renderNav(h) {
   const items = [
     ['h', 'Главная', 'home', '', 'home', '--accent'],
     ['s', 'Слова'], ['a', 'Upgrade', 'words-up', W ? learned('up') + '/' + n.up : '', 'up', '--c-words'], ['a', 'Тетрадь', 'words-nb', W ? learned('nb') + '/' + n.nb : '', 'list', '--c-words'], ['a', 'Словарь B2 · A–Z', 'words-b2', W ? learned('b2') + '/' + n.b2 : '', 'cards', '--c-words'],
-    ['s', 'Reading & Use of English'], ['a', 'Вариант 1 · все части', 'reading', Object.keys(res).length + '/7', 'book', '--c-reading'],
+    ['s', 'Reading & Use of English'], ['a', RS.length > 1 ? 'Варианты 1–' + RS.length : 'Вариант 1', 'reading', W ? allDone() + '/' + RS.length * 7 : '', 'book', '--c-reading'],
     ['s', 'Writing'], ['a', 'Шпаргалки', 'writing', '', 'sheet', '--c-writing'], ['a', WRITE_LABEL, 'write', '', 'pen', '--c-writing'],
     ['s', 'Speaking'], ['a', 'Фразы и части', 'speaking', '', 'mic', '--c-speaking'], ['a', 'Мои фразы', 'speak-fav', String(Object.keys(Store.data.speaking.fav || {}).length || ''), 'star', '--c-speaking'],
     ['s', 'Прогресс'], ['a', 'Достижения', 'badges', got + '/' + BADGES.length, 'medal', '--gold-deep']
   ];
   $('#nav').innerHTML = items.map(it => it[0] === 's' ? '<div class="nav-h">' + esc(it[1]) + '</div>'
-    : '<a href="#' + it[2] + '" class="' + ((h === it[2] || (it[2] === 'write' && h.startsWith('write-')) || (it[2] === 'writing' && h.startsWith('fmt-')) || (it[2] === 'speaking' && h.startsWith('speak-') && h !== 'speak-fav') || (it[2] === 'reading' && (h.startsWith('part-') || h === 'full-test'))) ? 'on' : '') + '"><span class="ni" style="--c:var(' + it[5] + ')">' + ICON[it[4]] + '</span><span class="lb">' + esc(it[1]) + '</span>' + (it[3] ? '<span class="cnt">' + esc(it[3]) + '</span>' : '') + '</a>').join('');
+    : '<a href="#' + it[2] + '" class="' + ((h === it[2] || (it[2] === 'write' && h.startsWith('write-')) || (it[2] === 'writing' && h.startsWith('fmt-')) || (it[2] === 'speaking' && h.startsWith('speak-') && h !== 'speak-fav') || (it[2] === 'reading' && (h.startsWith('part-') || h === 'full-test' || /^(reading-|v\d-)/.test(h)))) ? 'on' : '') + '"><span class="ni" style="--c:var(' + it[5] + ')">' + ICON[it[4]] + '</span><span class="lb">' + esc(it[1]) + '</span>' + (it[3] ? '<span class="cnt">' + esc(it[3]) + '</span>' : '') + '</a>').join('');
   renderHud();
 }
 
@@ -296,9 +298,13 @@ function route() {
   if (h === 'words' || h === 'words-up') return Words('up');
   if (h === 'words-nb') return Words('nb');
   if (h === 'words-b2') return Words('b2');
-  if (h === 'reading') return ReadingHub();
-  if (/^part-[1-7]$/.test(h)) return Exam('part', [+h.slice(5)]);
-  if (h === 'full-test') return Exam('full', [1, 2, 3, 4, 5, 6, 7]);
+  if (h === 'reading') return ReadingList();
+  let rm;
+  if ((rm = /^reading-(\d)$/.exec(h)) && RS[rm[1] - 1]) { setV(+rm[1]); return ReadingHub(); }
+  if (/^part-[1-7]$/.test(h)) { setV(1); return Exam('part', [+h.slice(5)]); }
+  if ((rm = /^v(\d)-part-([1-7])$/.exec(h)) && RS[rm[1] - 1]) { setV(+rm[1]); return Exam('part', [+rm[2]]); }
+  if ((rm = /^v(\d)-full$/.exec(h)) && RS[rm[1] - 1]) { setV(+rm[1]); return Exam('full', [1, 2, 3, 4, 5, 6, 7]); }
+  if (h === 'full-test') { setV(1); return Exam('full', [1, 2, 3, 4, 5, 6, 7]); }
   if (h === 'writing') return WritingHub();
   if (h === 'badges') return Badges();
   if (h === 'speaking') return SpeakingHub();
@@ -424,7 +430,7 @@ function SpeakPractice(n) {
 const touchUI = () => window.matchMedia('(pointer:coarse)').matches;
 const HINTS = {
   words: () => '<b>Карточки</b>: вспомни слово сам, открой ответ и честно оцени ' + (touchUI() ? 'свайпом: → знаю, ← не вспомнил, ↑ с трудом.' : 'клавишами 1, 2, 3.') + ' Сайт проверяет тебя сам в <b>«Тесте»</b>.',
-  reading: () => 'Выбери часть или весь вариант. Решай без подсказок, потом жми <b>«Проверить»</b> — покажем баллы и объясним каждый ответ.',
+  reading: () => 'Выбери вариант, а в нём — одну часть или весь вариант сразу. Решай без подсказок, потом жми <b>«Проверить»</b> — покажем баллы и объясним каждый ответ.',
   writing: () => 'Открой шпаргалку формата: структура и готовые фразы. Потом жми <b>«' + WRITE_LABEL + '»</b>.',
   write: () => 'Нажми <b>«Старт 40 минут»</b>, как на экзамене, и следи за счётчиком слов. Черновик сохраняется сам.' + (IN_CLAUDE ? ' Готово — жми «Проверить с Claude».' : ''),
   speaking: () => 'Начни с <b>общих фраз</b>, потом открой Part 1–4. Жми ☆ у фраз, которые хочешь выучить, — они соберутся в <b>«Мои фразы»</b>.',
@@ -443,7 +449,7 @@ function hint(key) {
 function Home() {
   const d = Store.data, res = d.reading.results || {};
   const tot = W.words.length, lw = learned('up') + learned('nb') + learned('b2');
-  const parts = Object.keys(res).length;
+  const parts = allDone();
   const hist = d.writing.history || [];
   const lastW = hist[hist.length - 1];
   let examLine = 'Укажи дату экзамена — покажем, сколько осталось';
@@ -459,7 +465,7 @@ function Home() {
     '<label class="small muted" style="display:flex;flex-direction:column;gap:4px">Дата экзамена<input type="date" id="exDate" value="' + esc(d.meta.exam || '') + '"></label></div>' +
     '<div class="grid4">' +
     '<div class="card stat"><div class="muted small">Слов выучено</div><b>' + lw + ' <small>/ ' + tot + '</small></b><div class="bar thin" style="margin-top:12px;--c:var(--c-words)"><i style="width:' + (lw / tot * 100).toFixed(1) + '%"></i></div></div>' +
-    '<div class="card stat"><div class="muted small">Reading &amp; UoE</div><b>' + parts + ' <small>/ 7 частей</small></b><div class="bar thin" style="margin-top:12px;--c:var(--c-reading)"><i style="width:' + (parts / 7 * 100).toFixed(1) + '%"></i></div></div>' +
+    '<div class="card stat"><div class="muted small">Reading &amp; UoE</div><b>' + parts + ' <small>/ ' + RS.length * 7 + ' частей</small></b><div class="bar thin" style="margin-top:12px;--c:var(--c-reading)"><i style="width:' + (parts / (RS.length * 7) * 100).toFixed(1) + '%"></i></div></div>' +
     (IN_CLAUDE ? '<div class="card stat"><div class="muted small">Текстов проверено</div><b>' + hist.length + '</b><div class="muted small" style="margin-top:8px">' + (lastW ? 'Последний: ' + esc(lastW.fmt) + ' · ' + lastW.total + '/20' : 'Пока ни одного') + '</div></div>' : '<div class="card stat"><div class="muted small">Текстов написано</div><b>' + Object.values(d.writing.drafts || {}).filter(x => x && x.text && x.text.trim()).length + '</b><div class="muted small" style="margin-top:8px">Черновики сохраняются сами</div></div>') +
     '<a class="card stat tile goal-card' + (x >= g ? ' done' : '') + '" href="#badges" style="--c:var(--gold)"><div class="muted small">Цель дня' + (sk ? ' · <span style="color:var(--flame);font-weight:800">' + sk + ' ' + plural(sk, 'день', 'дня', 'дней') + ' подряд</span>' : '') + '</div><b>' + x + ' <small>/ ' + g + ' XP</small></b>' +
     '<div class="bar thin" style="margin-top:12px;--c:' + (x >= g ? 'var(--ok)' : 'var(--gold)') + '"><i style="width:' + Math.min(100, x / g * 100).toFixed(1) + '%"></i></div><div style="margin-top:12px">' + weekStrip() + '</div></a>' +
@@ -468,7 +474,7 @@ function Home() {
       '<div class="cont"><div><div class="lbl">С чего начать</div><div class="big">Upgrade-слова: простое → сильное</div></div><a class="btn lg" href="#words-up">Начать →</a></div>') +
     '<div class="secs">' +
     tile('words-up', '--c-words', 'cards', 'Слова', 'Словарь B2 по буквам A–Z, Upgrade (простое → сложное) и слова из тетради. Карточки, тесты, повтор ошибок.', 'Учить') +
-    tile('reading', '--c-reading', 'book', 'Reading &amp; Use of English', 'Все 7 частей в формате экзамена, с таймером и объяснением каждого ответа.', 'Тренироваться') +
+    tile('reading', '--c-reading', 'book', 'Reading &amp; Use of English', RS.length + ' ' + plural(RS.length, 'вариант', 'варианта', 'вариантов') + ' экзамена: все 7 частей, таймер и объяснение каждого ответа.', 'Тренироваться') +
     tile('writing', '--c-writing', 'pen', 'Writing', (IN_CLAUDE ? 'Шпаргалки по 6 форматам и проверка твоего текста по критериям FCE.' : 'Шпаргалки по 6 форматам и тренировка письма с таймером и счётчиком слов.'), 'Писать') +
     tile('speaking', '--c-speaking', 'mic', 'Speaking', 'Главные фразы для всех 4 частей и тренажёр: вопрос → твой ответ вслух → пример идеального ответа.', 'Говорить') +
     '</div></div>';
@@ -805,35 +811,47 @@ function Badges() {
 /* ========== reading ========== */
 const PTS = { 1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 2, 7: 1 };
 const partOf = n => R.parts[n - 1];
+const setV = v => { RV = v; R = RS[v - 1]; };
+// results of variant 1 keep their old keys ('1'..'7'), other variants use 'v:n'
+const rkey = (n, v = RV) => v === 1 ? String(n) : v + ':' + n;
+const rhash = (what, v = RV) => what === 'hub' ? 'reading-' + v : what === 'full' ? (v === 1 ? 'full-test' : 'v' + v + '-full') : (v === 1 ? 'part-' + what : 'v' + v + '-part-' + what);
+const vDone = v => [1, 2, 3, 4, 5, 6, 7].filter(n => (Store.data.reading.results || {})[rkey(n, v)]).length;
+const allDone = () => RS.reduce((a, _, i) => a + vDone(i + 1), 0);
+function ReadingList() {
+  const run = Store.data.reading.run;
+  view.innerHTML = '<div class="page"><div class="head"><div><div class="muted small">Reading &amp; Use of English</div><h1>Варианты</h1></div></div>' +
+    '<p class="muted">Каждый вариант — полный экзамен: 7 частей, 52 вопроса. Тексты и задания оригинальные, написаны по формату Cambridge B2 First, к каждому ответу есть объяснение.</p>' +
+    (run && !run.checked && RS[(run.v || 1) - 1] ? '<div class="cont"><div><div class="lbl">Незаконченная попытка</div><div style="font-size:18px;font-weight:600;margin-top:4px">Вариант ' + (run.v || 1) + ' · ' + (run.mode === 'full' ? 'весь вариант' : 'Part ' + run.parts[0]) + ' · отвечено ' + Object.keys(run.ans || {}).length + '</div></div><a class="btn" href="#' + (run.mode === 'full' ? rhash('full', run.v || 1) : rhash(run.parts[0], run.v || 1)) + '">Продолжить →</a></div>' : '') +
+    '<div class="grid2">' + RS.map((r, i) => { const v = i + 1, d = vDone(v); return '<a class="card tile" href="#reading-' + v + '" style="--c:var(--c-reading)"><div class="muted small">' + esc(r.parts.map(p => p.title).filter(Boolean).join(' · ')) + '</div><h3>' + esc(r.title) + '</h3><div class="prog"><div class="bar" style="--c:var(--c-reading)"><i style="width:' + (d / 7 * 100).toFixed(1) + '%"></i></div>' + d + '/7</div><span class="go">' + (d ? (d === 7 ? 'Повторить →' : 'Продолжить →') : 'Начать →') + '</span></a>'; }).join('') + '</div></div>';
+  hint('reading');
+}
 function ReadingHub() {
   const res = Store.data.reading.results || {};
   const run = Store.data.reading.run;
-  view.innerHTML = '<div class="page"><div class="head"><div><div class="muted small">Reading &amp; Use of English</div><h1>' + esc(R.title) + '</h1></div></div>' +
-    '<div class="cont"><div><div class="lbl">Как на экзамене</div><div style="font-size:19px;font-weight:600;margin-top:4px">Решить весь вариант: 7 частей, 52 вопроса, 75 минут</div><div class="small" style="opacity:.85;margin-top:2px">Между частями переключаешься вверху, проверка — в конце.</div></div><a class="btn" href="#full-test">Решить всё →</a></div>' +
+  view.innerHTML = '<div class="page"><a class="btn sm ghost" href="#reading" style="align-self:flex-start">' + ICON.back + 'Все варианты</a><div class="head"><div><div class="muted small">Reading &amp; Use of English</div><h1>' + esc(R.title) + '</h1></div></div>' +
+    '<div class="cont"><div><div class="lbl">Как на экзамене</div><div style="font-size:19px;font-weight:600;margin-top:4px">Решить весь вариант: 7 частей, 52 вопроса, 75 минут</div><div class="small" style="opacity:.85;margin-top:2px">Между частями переключаешься вверху, проверка — в конце.</div></div><a class="btn" href="#' + rhash('full') + '">Решить всё →</a></div>' +
     '<h2>Или выбери одну часть</h2>' +
-    '<p class="muted">Тексты и задания оригинальные, написаны по формату Cambridge B2 First. К каждому ответу есть объяснение, почему верно именно это.</p>' +
-    (run && !run.checked ? '<div class="cont"><div><div class="lbl">Незаконченная попытка</div><div style="font-size:18px;font-weight:600;margin-top:4px">' + (run.mode === 'full' ? 'Полный вариант' : 'Part ' + run.parts[0]) + ' · отвечено ' + Object.keys(run.ans || {}).length + '</div></div><a class="btn" href="#' + (run.mode === 'full' ? 'full-test' : 'part-' + run.parts[0]) + '">Продолжить →</a></div>' : '') +
+        (run && !run.checked && (run.v || 1) === RV ? '<div class="cont"><div><div class="lbl">Незаконченная попытка</div><div style="font-size:18px;font-weight:600;margin-top:4px">' + (run.mode === 'full' ? 'Полный вариант' : 'Part ' + run.parts[0]) + ' · отвечено ' + Object.keys(run.ans || {}).length + '</div></div><a class="btn" href="#' + (run.mode === 'full' ? rhash('full') : rhash(run.parts[0])) + '">Продолжить →</a></div>' : '') +
     '<div class="grid2">' + R.parts.map(p => {
-      const r = res[p.n];
+      const r = res[rkey(p.n)];
       const max = p.q.length * PTS[p.n];
-      return '<a class="card tile" href="#part-' + p.n + '"><div class="muted small">' + esc(p.skill) + ' · вопросы ' + p.q[0].n + '–' + p.q[p.q.length - 1].n + '</div><h3>Part ' + p.n + ' · ' + esc(p.name) + '</h3>' +
+      return '<a class="card tile" href="#' + rhash(p.n) + '"><div class="muted small">' + esc(p.skill) + ' · вопросы ' + p.q[0].n + '–' + p.q[p.q.length - 1].n + '</div><h3>Part ' + p.n + ' · ' + esc(p.name) + '</h3>' +
         (r ? '<div class="prog"><div class="bar"><i style="width:' + (r.best / max * 100).toFixed(1) + '%"></i></div>' + r.best + '/' + max + '</div><div class="muted small">Лучший результат · последний: ' + r.last + '/' + max + '</div>' : '<div class="muted small">' + p.q.length + ' ' + plural(p.q.length, 'вопрос', 'вопроса', 'вопросов') + ' · ' + max + ' ' + plural(max, 'балл', 'балла', 'баллов') + '</div>') +
         '<span class="go">' + (r ? 'Ещё раз →' : 'Начать →') + '</span></a>';
     }).join('') + '</div></div>';
-  hint('reading');
-}
+  }
 
 let E = null;
 function Exam(mode, parts) {
   const run = Store.data.reading.run;
-  const same = run && run.mode === mode && run.parts.join() === parts.join();
-  if (!E || E.mode !== mode || E.parts.join() !== parts.join()) {
-    E = same ? Object.assign({ tab: 'q' }, run) : { mode, parts, cur: 0, ans: {}, flags: {}, checked: false, elapsed: 0, tab: 'q', qcur: partOf(parts[0]).q[0].n };
+  const same = run && (run.v || 1) === RV && run.mode === mode && run.parts.join() === parts.join();
+  if (!E || (E.v || 1) !== RV || E.mode !== mode || E.parts.join() !== parts.join()) {
+    E = same ? Object.assign({ tab: 'q', v: RV }, run) : { v: RV, mode, parts, cur: 0, ans: {}, flags: {}, checked: false, elapsed: 0, tab: 'q', qcur: partOf(parts[0]).q[0].n };
     if (!same) saveRun();
   }
   E.since = Date.now();
   document.body.classList.add('exam');
-  setLast(mode === 'full' ? 'full-test' : 'part-' + parts[0], mode === 'full' ? 'Reading · полный вариант' : 'Reading · Part ' + parts[0] + ' — ' + partOf(parts[0]).name);
+  setLast(mode === 'full' ? rhash('full') : rhash(parts[0]), 'Reading · ' + R.title + ' · ' + (mode === 'full' ? 'весь вариант' : 'Part ' + parts[0] + ' — ' + partOf(parts[0]).name));
   const tick = setInterval(() => {
     const el = $('#timer'); if (!el) return;
     const t = E.elapsed + (E.checked ? 0 : (Date.now() - E.since) / 1000);
@@ -931,14 +949,14 @@ function drawExam(keepScroll) {
       (E.mode === 'full' ? '<div class="small">' + rows.map(([n, s]) => 'Part ' + n + ': ' + s.pts + '/' + s.max).join(' · ') + '</div>' : '') +
       (E.xpGain != null ? '<span class="xpgain">' + ICON.bolt + '+' + E.xpGain + ' XP — по баллам Cambridge</span>' : '') +
       '<div class="small">Разбери объяснения к каждому вопросу ниже' + (p.kind === 'mc-text' || p.kind === 'matching' ? ', а фразы-доказательства подсвечены в тексте' : '') + '.</div>' +
-      '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="retry">Пройти заново</button><a class="btn sm ghost" href="#reading">К списку частей</a></div></div>';
+      '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="retry">Пройти заново</button><a class="btn sm ghost" href="#' + rhash('hub') + '">К списку частей</a></div></div>';
   }
   const sentList = p.kind === 'gapped' ? '<div class="sents">' + Object.entries(p.sents).map(([k, s]) => '<div class="' + (!E.checked && Object.values(E.ans).includes(k) ? 'used' : '') + '"><b>' + k + '</b> ' + esc(s) + '</div>').join('') + '</div>' : '';
   view.innerHTML =
-    '<header class="ex-head"><a class="btn sm ghost" href="#reading">' + ICON.back + 'Выйти</a>' +
-    '<span class="title">' + (E.mode === 'full' ? 'Полный вариант · ' : '') + 'Part ' + p.n + ' · ' + esc(p.name) + '</span>' +
+    '<header class="ex-head"><a class="btn sm ghost" href="#' + rhash('hub') + '">' + ICON.back + 'Выйти</a>' +
+    '<span class="title">' + esc(R.title) + ' · ' + 'Part ' + p.n + ' · ' + esc(p.name) + '</span>' +
     (E.mode === 'full' ? '<div class="ptabs" aria-label="Части">' + E.parts.map((n, i) => '<button type="button" data-part="' + i + '" class="' + (i === E.cur ? 'on' : '') + '"><span class="pw">Part </span>' + n + '</button>').join('') + '</div>'
-      : '<div class="ptabs" aria-label="Другие части">' + R.parts.map(pp => '<a class="pt' + (pp.n === p.n ? ' on' : '') + '" href="#part-' + pp.n + '"><span class="pw">Part </span>' + pp.n + '</a>').join('') + '<a class="pt" href="#full-test">Все</a></div>') +
+      : '<div class="ptabs" aria-label="Другие части">' + R.parts.map(pp => '<a class="pt' + (pp.n === p.n ? ' on' : '') + '" href="#' + rhash(pp.n) + '"><span class="pw">Part </span>' + pp.n + '</a>').join('') + '<a class="pt" href="#' + rhash('full') + '">Все</a></div>') +
     '<span class="sp"></span><div class="timer" id="timer" title="' + (E.mode === 'full' ? 'Осталось времени' : 'Прошло времени') + '">' + ICON.clock + '<span>' + timeTxt + '</span></div>' +
     (E.checked ? '' : '<button class="btn sm pri" id="check">Проверить</button>') + '</header>' +
     '<div class="mtabs"><button type="button" data-tab="t" class="' + (E.tab === 't' ? 'on' : '') + '">Текст</button><button type="button" data-tab="q" class="' + (E.tab === 'q' ? 'on' : '') + '">Вопросы</button></div>' +
@@ -981,7 +999,7 @@ function bindExam(p) {
   $('#prev').onclick = () => { const i = all.indexOf(E.qcur); if (i > 0) goQ(all[i - 1], true); };
   $('#next').onclick = () => { const i = all.indexOf(E.qcur); if (i < all.length - 1) goQ(all[i + 1], true); };
   if ($('#check')) $('#check').onclick = askCheck;
-  if ($('#retry')) $('#retry').onclick = () => { E = { xpGain: null, mode: E.mode, parts: E.parts, cur: 0, ans: {}, flags: {}, checked: false, elapsed: 0, tab: 'q', qcur: partOf(E.parts[0]).q[0].n, since: Date.now() }; saveRun(); drawExam(); };
+  if ($('#retry')) $('#retry').onclick = () => { E = { xpGain: null, v: E.v || RV, mode: E.mode, parts: E.parts, cur: 0, ans: {}, flags: {}, checked: false, elapsed: 0, tab: 'q', qcur: partOf(E.parts[0]).q[0].n, since: Date.now() }; saveRun(); drawExam(); };
 }
 function askCheck() {
   const qs = E.parts.flatMap(n => partOf(n).q);
@@ -994,7 +1012,7 @@ function doCheck() {
   stamp(); E.checked = true;
   const res = Store.data.reading.results || (Store.data.reading.results = {});
   let pts = 0, max = 0;
-  for (const n of E.parts) { const s = partScore(partOf(n)); pts += s.pts; max += s.max; const prev = res[n]; res[n] = { best: Math.max(prev ? prev.best : 0, s.pts), last: s.pts, max: s.max, t: Date.now() }; }
+  for (const n of E.parts) { const s = partScore(partOf(n)); pts += s.pts; max += s.max; const k = rkey(n), prev = res[k]; res[k] = { best: Math.max(prev ? prev.best : 0, s.pts), last: s.pts, max: s.max, t: Date.now() }; }
   E.xpGain = pts;
   saveRun(); Store.save('reading');
   E.qcur = partOf(E.parts[E.cur]).q[0].n;
