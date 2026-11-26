@@ -1,0 +1,1039 @@
+{
+ "about": [
+  "Speaking сдают <b>вдвоём</b> с другим кандидатом, длится около <b>14 минут</b>. В комнате два экзаменатора: один задаёт вопросы, второй только слушает и ставит оценки.",
+  "Оценивают 4 критерия: <b>Grammar &amp; Vocabulary</b> (точность и разнообразие), <b>Discourse Management</b> (связно ли и достаточно ли длинно ты говоришь), <b>Pronunciation</b> (понятно ли тебя), <b>Interactive Communication</b> (как ты общаешься с партнёром).",
+  "Главное правило: <b>отвечай развёрнуто</b>. Ответ + причина + пример — и ты уже звучишь на B2. Одно слово «Yes» — почти ноль баллов.",
+  "Не учи готовые ответы наизусть: экзаменаторы это слышат. Учи <b>фразы-связки</b> — они подходят к любому вопросу."
+ ],
+ "general": [
+  {
+   "t": "Выиграть время",
+   "note": "Те самые «слова-паразиты», только правильные. Дают 2–3 секунды подумать и звучат естественно. Не больше одной на ответ и не начинай каждый ответ с Well.",
+   "p": [
+    [
+     "Well, …",
+     "Ну, …"
+    ],
+    [
+     "Actually, …",
+     "Вообще-то, на самом деле…"
+    ],
+    [
+     "To be honest, …",
+     "Честно говоря, …"
+    ],
+    [
+     "Honestly, …",
+     "Честно, …"
+    ],
+    [
+     "Let me think…",
+     "Дай подумать…"
+    ],
+    [
+     "That's a good question.",
+     "Хороший вопрос."
+    ],
+    [
+     "That's a tricky one, but…",
+     "Сложный вопрос, но…",
+     2
+    ],
+    [
+     "I've never really thought about it, but…",
+     "Никогда об этом не задумывался, но…",
+     2
+    ],
+    [
+     "Off the top of my head, …",
+     "Навскидку, …",
+     2
+    ]
+   ]
+  },
+  {
+   "t": "Сказать своё мнение",
+   "note": "Чередуй, не повторяй I think в каждом предложении.",
+   "p": [
+    [
+     "I think / I believe…",
+     "Я думаю / считаю…"
+    ],
+    [
+     "In my opinion, …",
+     "По моему мнению, …"
+    ],
+    [
+     "Personally, I'd say…",
+     "Лично я бы сказал…"
+    ],
+    [
+     "If you ask me, …",
+     "Если хочешь знать моё мнение, …"
+    ],
+    [
+     "I firmly believe that…",
+     "Я твёрдо уверен, что…",
+     2
+    ],
+    [
+     "As far as I'm concerned, …",
+     "Что касается меня, …",
+     2
+    ],
+    [
+     "I'm not entirely sure, but I'd guess…",
+     "Я не совсем уверен, но предположу…",
+     2
+    ]
+   ]
+  },
+  {
+   "t": "Причина и пример",
+   "note": "Каждое мнение — с причиной. Это самый простой способ сделать ответ длиннее.",
+   "p": [
+    [
+     "The main reason is that…",
+     "Главная причина в том, что…"
+    ],
+    [
+     "That's because…",
+     "Это потому, что…"
+    ],
+    [
+     "For example, … / For instance, …",
+     "Например, …"
+    ],
+    [
+     "Take my brother, for example.",
+     "Возьмём, например, моего брата.",
+     2
+    ],
+    [
+     "What I mean is…",
+     "Я имею в виду, что…"
+    ]
+   ]
+  },
+  {
+   "t": "Добавить и развить мысль",
+   "p": [
+    [
+     "What's more, …",
+     "Более того, …"
+    ],
+    [
+     "Apart from that, …",
+     "Кроме того, …"
+    ],
+    [
+     "Another thing is that…",
+     "Ещё один момент: …"
+    ],
+    [
+     "On top of that, …",
+     "Вдобавок ко всему, …",
+     2
+    ],
+    [
+     "Not only that, but…",
+     "И не только это, но и…",
+     2
+    ]
+   ]
+  },
+  {
+   "t": "Контраст",
+   "p": [
+    [
+     "However, …",
+     "Однако, …"
+    ],
+    [
+     "On the other hand, …",
+     "С другой стороны, …"
+    ],
+    [
+     "…, although …",
+     "…, хотя …"
+    ],
+    [
+     "Having said that, …",
+     "Но при этом, …",
+     2
+    ],
+    [
+     "Even so, …",
+     "Тем не менее, …",
+     2
+    ]
+   ]
+  },
+  {
+   "t": "Не понял вопрос или забыл слово",
+   "note": "Переспросить — нормально, за это не снижают. Молчать — плохо.",
+   "p": [
+    [
+     "Sorry, could you repeat the question, please?",
+     "Извините, повторите вопрос, пожалуйста."
+    ],
+    [
+     "Sorry, I didn't quite catch that.",
+     "Извините, я не совсем расслышал.",
+     2
+    ],
+    [
+     "I can't remember the word, but it's a kind of…",
+     "Не помню слово, но это такой вид…"
+    ],
+    [
+     "It's something you use for…",
+     "Это то, чем пользуются для…"
+    ],
+    [
+     "Let me put it another way.",
+     "Скажу по-другому.",
+     2
+    ]
+   ]
+  },
+  {
+   "t": "Подвести итог",
+   "p": [
+    [
+     "So, all in all, …",
+     "Так что, в целом, …"
+    ],
+    [
+     "Overall, I'd say…",
+     "В общем, я бы сказал…"
+    ],
+    [
+     "That's why I think…",
+     "Вот почему я думаю…"
+    ],
+    [
+     "At the end of the day, …",
+     "В конечном счёте, …",
+     2
+    ]
+   ]
+  }
+ ],
+ "parts": [
+  {
+   "n": 1,
+   "name": "Interview",
+   "time": "2 минуты",
+   "what": "Экзаменатор задаёт каждому кандидату по очереди простые вопросы о нём самом: дом, учёба или работа, свободное время, путешествия, планы.",
+   "check": "Можешь ли ты легко говорить о себе: понятно, без долгих пауз и чуть подробнее, чем одним предложением.",
+   "tips": [
+    "Ответ на <b>20–30 секунд</b>: 2–4 предложения. Не одно слово, но и не монолог на минуту.",
+    "Схема: <b>ответ → причина → пример или деталь</b>.",
+    "Показывай разные времена: <i>I used to…, I've been…, I'm planning to…</i>",
+    "Улыбайся и смотри на экзаменатора — это просто разговор."
+   ],
+   "mistakes": [
+    "«Yes, I do.» — и тишина.",
+    "Повторять вопрос целиком: <i>Do I live in a house or a flat? I live in a flat.</i>",
+    "Рассказывать заученный текст не по вопросу."
+   ],
+   "phrases": [
+    {
+     "t": "Привычки",
+     "p": [
+      [
+       "I usually… / I tend to…",
+       "Я обычно… / Я склонен…"
+      ],
+      [
+       "Whenever I get the chance, I…",
+       "Как только появляется возможность, я…"
+      ],
+      [
+       "Most of the time, …",
+       "Большую часть времени…"
+      ]
+     ]
+    },
+    {
+     "t": "Что нравится и нет",
+     "p": [
+      [
+       "I'm really into…",
+       "Я очень увлекаюсь…"
+      ],
+      [
+       "I'm not a big fan of…",
+       "Я не большой фанат…"
+      ],
+      [
+       "I can't stand…",
+       "Терпеть не могу…"
+      ],
+      [
+       "I'd rather… than…",
+       "Я бы лучше…, чем…"
+      ]
+     ]
+    },
+    {
+     "t": "Прошлое и будущее",
+     "p": [
+      [
+       "I used to…, but now…",
+       "Раньше я…, а теперь…"
+      ],
+      [
+       "When I was younger, …",
+       "Когда я был младше, …"
+      ],
+      [
+       "I'm planning to… / I'm hoping to…",
+       "Я планирую… / Я надеюсь…"
+      ],
+      [
+       "I'd love to… one day.",
+       "Я бы очень хотел когда-нибудь…",
+       2
+      ]
+     ]
+    }
+   ],
+   "questions": [
+    {
+     "topic": "Дом",
+     "q": "Do you live in a house or a flat?",
+     "a": "I live in a flat with my parents and my younger sister. [[To be honest]], it's not very big, but it's in a really convenient area — there's a metro station just five minutes away. [[I'd love to]] live in a house with a garden [[one day]], though."
+    },
+    {
+     "topic": "Дом",
+     "q": "What do you like most about your neighbourhood?",
+     "a": "[[Well]], the best thing is probably the park near my building. [[Whenever I get the chance]], I go running there in the morning. [[What's more]], there are lots of small cafés, so it's a great place to meet friends."
+    },
+    {
+     "topic": "Свободное время",
+     "q": "What do you enjoy doing at the weekend?",
+     "a": "[[It depends on]] the weather, [[actually]]. If it's sunny, I [[usually]] go cycling with my friends. If it's cold, [[I'd rather]] stay at home and watch a series [[than]] go out. Last weekend, for example, I watched four episodes in one evening!"
+    },
+    {
+     "topic": "Свободное время",
+     "q": "Do you prefer spending time indoors or outdoors?",
+     "a": "Definitely outdoors. [[The main reason is that]] I spend the whole week sitting at a desk, so at the weekend I need some fresh air. [[Having said that]], in winter I [[tend to]] stay inside more."
+    },
+    {
+     "topic": "Учёба",
+     "q": "What do you enjoy most about your studies?",
+     "a": "[[I'm really into]] languages, so English lessons are my favourite. [[That's because]] our teacher makes them really interactive — we do debates and projects instead of just grammar exercises."
+    },
+    {
+     "topic": "Учёба",
+     "q": "Is there anything you would like to learn in the future?",
+     "a": "Yes, [[I'm hoping to]] learn how to play the guitar. I [[used to]] play the piano when I was a child, [[but]] I gave up. [[I firmly believe that]] it's never too late to start again."
+    },
+    {
+     "topic": "Семья и друзья",
+     "q": "Do you spend a lot of time with your family?",
+     "a": "Not as much as I'd like, [[to be honest]]. During the week everyone is busy, [[but]] on Sundays we always have lunch together. It's kind of a family tradition."
+    },
+    {
+     "topic": "Семья и друзья",
+     "q": "Tell us about your best friend.",
+     "a": "My best friend is called Anna. We've known each other since primary school, so almost ten years now. What I like most about her is that she's really honest — she always tells me the truth, even when I don't want to hear it."
+    },
+    {
+     "topic": "Путешествия",
+     "q": "Where did you go on your last holiday?",
+     "a": "Last summer I went to the seaside with my family. We spent two weeks there, and [[to be honest]], it was the best holiday I've ever had. We swam every day and even tried diving for the first time."
+    },
+    {
+     "topic": "Путешествия",
+     "q": "Would you rather travel alone or with friends?",
+     "a": "With friends, definitely. [[That's because]] it's much more fun to share experiences with people you know. [[On the other hand]], I can see why some people travel alone — you can do exactly what you want."
+    },
+    {
+     "topic": "Технологии",
+     "q": "How much time do you spend on your phone every day?",
+     "a": "[[Honestly]], probably too much — about four or five hours. Most of the time I'm chatting with friends or watching videos. I'm trying to cut down, [[though]], because it's quite distracting when I'm studying."
+    },
+    {
+     "topic": "Еда",
+     "q": "Do you enjoy cooking?",
+     "a": "[[I'm not a big fan of]] cooking every day, [[but]] I like making something special at the weekend. Last Saturday, [[for example]], I made pizza from scratch, and it turned out really well!"
+    },
+    {
+     "topic": "Планы",
+     "q": "What would you like to be doing in five years' time?",
+     "a": "[[That's a tricky one]]. [[I'd say]] I'd like to be studying at university, ideally abroad. [[I'm planning to]] apply to a programme in computer science, so I'm working hard on my English right now."
+    },
+    {
+     "topic": "Распорядок",
+     "q": "Are you a morning person?",
+     "a": "Not at all! [[I can't stand]] getting up early. [[Having said that]], I've noticed that I study much better in the morning, so I'm trying to change my habits."
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "name": "Long turn",
+   "time": "4 минуты",
+   "what": "Тебе дают две фотографии и вопрос над ними. Ты говоришь <b>1 минуту</b>: сравниваешь фото и отвечаешь на вопрос. Потом партнёру задают короткий вопрос про твои фото (~30 секунд). Затем вы меняетесь.",
+   "check": "Умеешь ли ты сравнивать, предполагать (might, could, looks as if) и говорить целую минуту связно, без длинных пауз.",
+   "tips": [
+    "<b>Не описывай</b> каждую деталь. Задача — сравнить и ответить на вопрос.",
+    "Примерно <b>20 секунд</b> на сравнение и <b>40 секунд</b> на вопрос над фото.",
+    "Предполагай: <i>They might be…, It looks as if…, They must be…</i> — ты же не знаешь наверняка.",
+    "Слушай партнёра, пока он говорит про свои фото: тебе потом зададут вопрос."
+   ],
+   "mistakes": [
+    "«In the first picture I can see a man. He has a blue T-shirt…» — описание вместо сравнения.",
+    "Забыть вопрос над фотографиями и проговорить всю минуту о другом.",
+    "Остановиться через 30 секунд. Если мысли кончились — добавь, что выбрал бы ты сам."
+   ],
+   "phrases": [
+    {
+     "t": "Сравнить",
+     "p": [
+      [
+       "Both pictures show…",
+       "На обеих фотографиях…"
+      ],
+      [
+       "In the first picture…, whereas in the second…",
+       "На первой фотографии…, тогда как на второй…"
+      ],
+      [
+       "One big difference is that…",
+       "Одно большое различие в том, что…"
+      ],
+      [
+       "Unlike the people in the first photo, …",
+       "В отличие от людей на первом фото, …",
+       2
+      ],
+      [
+       "Similarly, …",
+       "Точно так же…"
+      ]
+     ]
+    },
+    {
+     "t": "Предположить",
+     "p": [
+      [
+       "They might / could be…",
+       "Они, возможно, …"
+      ],
+      [
+       "They must be…",
+       "Они, должно быть, … (почти уверен)"
+      ],
+      [
+       "It looks as if…",
+       "Похоже, что…"
+      ],
+      [
+       "They seem to be…",
+       "Кажется, они…"
+      ],
+      [
+       "Judging by their faces, …",
+       "Судя по их лицам, …",
+       2
+      ],
+      [
+       "I'd imagine that…",
+       "Я бы предположил, что…",
+       2
+      ]
+     ]
+    },
+    {
+     "t": "Ответить партнёру (30 секунд)",
+     "p": [
+      [
+       "I'd prefer…, mainly because…",
+       "Я бы предпочёл…, в основном потому что…"
+      ],
+      [
+       "For me, it would have to be…",
+       "Для меня это точно…",
+       2
+      ]
+     ]
+    }
+   ],
+   "questions": [
+    {
+     "art": [
+      "classroom",
+      "online"
+     ],
+     "topic": "Учёба",
+     "q": "Compare the photographs and say what the advantages of learning in these different ways might be.",
+     "q2": "Which way of learning would you prefer? Why?",
+     "a": "[[Both pictures show]] people learning, but in very different ways. [[In the first picture]], there's a group of students in a classroom with a teacher, [[whereas in the second]] a young man is studying alone at home on his laptop. [[It looks as if]] the students in the classroom are enjoying the lesson — [[they seem to be]] paying attention and asking questions. The main advantage of learning like this is that you can get help from the teacher immediately and learn from your classmates. [[On the other hand]], the man in the second photo can study whenever he wants and at his own speed. [[He might be]] working during the day, so online learning is probably more convenient for him. [[Having said that]], it must be quite hard to stay motivated without anyone around. [[So, all in all]], [[I'd say]] both ways have clear advantages."
+    },
+    {
+     "art": [
+      "picnic",
+      "festival"
+     ],
+     "topic": "Свободное время",
+     "q": "Compare the photographs and say why people might choose to spend their free time in these places.",
+     "q2": "Which of these places would you like to spend a day in? Why?",
+     "a": "[[Both pictures show]] people relaxing in their free time, but the atmosphere is completely different. [[In the first picture]], a family is having a picnic in a quiet park, [[whereas in the second]] there's a huge crowd at an outdoor music festival. [[I'd imagine that]] the family chose the park because it's peaceful and they can spend time together without any distractions. [[They might also]] want to save money. [[Unlike the people in the first photo]], the people at the festival are looking for excitement. [[Judging by their faces]], they're having an amazing time — [[they must be]] fans of the band. A festival is a great way to meet new people and see your favourite artists live. [[However]], it can be very noisy and tiring. [[Overall, I'd say]] it depends on whether you want to relax or have fun."
+    },
+    {
+     "art": [
+      "hiking",
+      "beach"
+     ],
+     "topic": "Путешествия",
+     "q": "Compare the photographs and say what people might enjoy about these different kinds of holidays.",
+     "q2": "Which kind of holiday do you prefer? Why?",
+     "a": "[[In the first picture]], two friends are hiking in the mountains, [[whereas in the second]] a couple is relaxing by the sea. [[One big difference is that]] the first holiday is quite active, while the second one looks very calm. The hikers [[might be]] enjoying the challenge of reaching the top and the amazing views. [[They seem to be]] tired, but happy. [[What's more]], this kind of holiday is usually cheaper. [[On the other hand]], the couple on the beach [[must be]] enjoying the sunshine and doing absolutely nothing. [[I'd imagine that]] they have stressful jobs, so they just want to rest. [[Personally, I'd say]] both holidays sound great, but for different reasons."
+    },
+    {
+     "art": [
+      "cooking",
+      "restaurant"
+     ],
+     "topic": "Еда",
+     "q": "Compare the photographs and say why people might choose to eat in these different ways.",
+     "q2": "Do you prefer eating at home or in a restaurant? Why?",
+     "a": "[[Both pictures show]] people having a meal together. [[In the first picture]], a family is cooking at home, [[whereas in the second]] a group of friends is eating in a restaurant. [[It looks as if]] the family is having a lot of fun — even the child is helping. People might choose to cook at home because it's healthier and much cheaper. [[Apart from that]], cooking together can bring a family closer. [[Unlike the family in the first photo]], the friends in the restaurant don't have to do any work. [[They might be]] celebrating something, like a birthday. Eating out is more convenient and you can try dishes you can't make yourself. [[However]], it can be quite expensive. [[So, all in all]], I think it depends on the occasion."
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "name": "Collaborative task",
+   "time": "4 минуты",
+   "what": "Вам с партнёром дают вопрос и 5 вариантов (mind map). <b>2 минуты</b> вы обсуждаете варианты друг с другом, потом экзаменатор задаёт второй вопрос — и у вас <b>1 минута</b>, чтобы прийти к решению.",
+   "check": "Умеешь ли ты общаться: начинать разговор, спрашивать мнение партнёра, реагировать на его слова, вежливо не соглашаться и договариваться.",
+   "tips": [
+    "Говори <b>с партнёром</b>, а не с экзаменатором. Смотри на него.",
+    "Не надо обсудить все 5 вариантов — важнее хорошо поговорить о 3–4.",
+    "Реагируй на слова партнёра, а потом добавляй своё: <i>That's a good point, and also…</i>",
+    "Не принимай решение в первые 2 минуты — его спросят отдельно.",
+    "Не обязательно соглашаться. Можно и не договориться — главное, обсуждать."
+   ],
+   "mistakes": [
+    "Говорить монологом минуту, не давая партнёру слова.",
+    "Игнорировать, что сказал партнёр, и говорить своё.",
+    "Решить за 20 секунд «Let's choose sport» — и замолчать."
+   ],
+   "phrases": [
+    {
+     "t": "Начать",
+     "p": [
+      [
+       "Shall we start with…?",
+       "Начнём с…?"
+      ],
+      [
+       "Shall I go first?",
+       "Можно я начну?"
+      ],
+      [
+       "Let's begin with this one.",
+       "Давай начнём с этого."
+      ]
+     ]
+    },
+    {
+     "t": "Спросить партнёра",
+     "p": [
+      [
+       "What do you think?",
+       "Что ты думаешь?"
+      ],
+      [
+       "How do you feel about…?",
+       "Как ты относишься к…?"
+      ],
+      [
+       "Would you agree?",
+       "Ты согласен?"
+      ],
+      [
+       "What's your take on this?",
+       "А как ты на это смотришь?",
+       2
+      ]
+     ]
+    },
+    {
+     "t": "Согласиться",
+     "p": [
+      [
+       "That's a good point.",
+       "Хорошая мысль."
+      ],
+      [
+       "Exactly! / Absolutely!",
+       "Именно! / Абсолютно!"
+      ],
+      [
+       "I couldn't agree more.",
+       "Полностью согласен.",
+       2
+      ]
+     ]
+    },
+    {
+     "t": "Вежливо не согласиться",
+     "p": [
+      [
+       "I see what you mean, but…",
+       "Понимаю, о чём ты, но…"
+      ],
+      [
+       "I'm not so sure about that.",
+       "Я не так уверен в этом."
+      ],
+      [
+       "I take your point, but…",
+       "Принимаю твой аргумент, но…",
+       2
+      ],
+      [
+       "That's true to some extent, but…",
+       "Отчасти это правда, но…",
+       2
+      ]
+     ]
+    },
+    {
+     "t": "Перейти дальше и решить",
+     "p": [
+      [
+       "Shall we move on to…?",
+       "Перейдём к…?"
+      ],
+      [
+       "What about this one?",
+       "А как насчёт этого?"
+      ],
+      [
+       "So, which one shall we choose?",
+       "Итак, что выберем?"
+      ],
+      [
+       "It seems we both think…",
+       "Похоже, мы оба считаем…"
+      ],
+      [
+       "Shall we go for…?",
+       "Остановимся на…?"
+      ],
+      [
+       "Let's agree to disagree.",
+       "Останемся каждый при своём мнении.",
+       2
+      ]
+     ]
+    }
+   ],
+   "questions": [
+    {
+     "topic": "Здоровье",
+     "q": "Here are some things that can help people stay healthy. Talk to each other about how these things can help people stay healthy.",
+     "prompts": [
+      "doing sport",
+      "eating fresh food",
+      "getting enough sleep",
+      "spending time with friends",
+      "having less screen time"
+     ],
+     "q2": "Which two things are the most important for young people?",
+     "a": [
+      [
+       "A",
+       "[[Shall we start with]] doing sport? [[I firmly believe that]] it's the most obvious way to stay healthy."
+      ],
+      [
+       "B",
+       "[[I couldn't agree more]]. It keeps you fit, and [[what's more]], it's good for your mood. [[How do you feel about]] eating fresh food?"
+      ],
+      [
+       "A",
+       "It's important, of course, but it can be quite expensive. Fresh fruit and vegetables cost a lot nowadays."
+      ],
+      [
+       "B",
+       "[[I see what you mean, but]] cooking at home is still cheaper than fast food. [[What about this one]] — getting enough sleep?"
+      ],
+      [
+       "A",
+       "[[That's a good point]]. Lots of teenagers stay up late on their phones, so they're tired all day."
+      ],
+      [
+       "B",
+       "[[Exactly!]] And that's connected to screen time. [[If you ask me]], less screen time would help people sleep better."
+      ],
+      [
+       "A",
+       "True. [[Shall we move on to]] spending time with friends? It's more about mental health, [[would you agree]]?"
+      ],
+      [
+       "B",
+       "Yes, definitely. Feeling lonely can be just as bad as not exercising."
+      ]
+     ],
+     "a2": [
+      [
+       "A",
+       "[[So, which one shall we choose]]? I'd say sport and sleep."
+      ],
+      [
+       "B",
+       "[[I'm not so sure about]] sport. [[It seems we both think]] sleep is really important, but I'd go for less screen time as well, because it affects everything else."
+      ],
+      [
+       "A",
+       "[[I take your point]]. OK, [[shall we go for]] sleep and less screen time?"
+      ],
+      [
+       "B",
+       "Yes, let's go for those two."
+      ]
+     ],
+     "c": "How can these things help people stay healthy?"
+    },
+    {
+     "topic": "Навыки",
+     "q": "Here are some skills that young people could learn before they leave school. Talk to each other about why these skills might be useful.",
+     "prompts": [
+      "cooking",
+      "managing money",
+      "speaking a foreign language",
+      "first aid",
+      "public speaking"
+     ],
+     "q2": "Which skill do you think is the most useful?",
+     "a": [
+      [
+       "A",
+       "[[Shall I go first]]? I think managing money is really useful. Lots of young people have no idea how to plan a budget."
+      ],
+      [
+       "B",
+       "[[That's a good point]]. When you start university and live alone, you suddenly have to pay for everything. [[What do you think]] about cooking?"
+      ],
+      [
+       "A",
+       "It's connected, [[actually]]. If you can cook, you save a lot of money."
+      ],
+      [
+       "B",
+       "[[Absolutely]]. [[What about this one]] — first aid? [[I'd imagine that]] it could even save someone's life."
+      ],
+      [
+       "A",
+       "[[That's true to some extent, but]] you probably won't need it very often. Speaking a foreign language, [[on the other hand]], is useful every day."
+      ],
+      [
+       "B",
+       "[[I see what you mean]]. It opens up so many opportunities — for travel, for jobs. And public speaking?"
+      ],
+      [
+       "A",
+       "[[To be honest]], I'm terrified of it! [[But]] that's exactly why it should be taught at school."
+      ]
+     ],
+     "a2": [
+      [
+       "A",
+       "[[So, which one shall we choose]]? For me, it would have to be a foreign language."
+      ],
+      [
+       "B",
+       "[[I'm not so sure about that]]. Managing money affects everybody, but not everyone needs a foreign language."
+      ],
+      [
+       "A",
+       "[[I take your point]], but in today's world almost every job needs English."
+      ],
+      [
+       "B",
+       "OK, [[let's agree to disagree]]!"
+      ]
+     ],
+     "c": "Why might these skills be useful for young people?"
+    },
+    {
+     "topic": "Город",
+     "q": "Here are some ways a town could be made better for young people. Talk to each other about how these things could improve a town for young people.",
+     "prompts": [
+      "a sports centre",
+      "more cycle lanes",
+      "cheaper public transport",
+      "a music venue",
+      "more parks"
+     ],
+     "q2": "Which idea would make the biggest difference?",
+     "a": [
+      [
+       "A",
+       "[[Let's begin with]] the sports centre. It would give young people somewhere to go after school."
+      ],
+      [
+       "B",
+       "[[Exactly]]. [[Not only that, but]] it would keep them active. [[How do you feel about]] cycle lanes?"
+      ],
+      [
+       "A",
+       "In my town, cycling is quite dangerous because of the traffic, so more cycle lanes would be great."
+      ],
+      [
+       "B",
+       "[[I couldn't agree more]]. And cheaper public transport would help too — young people don't usually have cars."
+      ],
+      [
+       "A",
+       "[[That's a good point]]. [[What's your take on]] a music venue?"
+      ],
+      [
+       "B",
+       "[[Honestly]], I think it would be popular, [[but]] maybe only with a small group of people. Parks are for everyone."
+      ],
+      [
+       "A",
+       "True, although most towns already have a few parks."
+      ]
+     ],
+     "a2": [
+      [
+       "A",
+       "[[So, which one shall we choose]]? I'd go for cheaper public transport."
+      ],
+      [
+       "B",
+       "Why that one?"
+      ],
+      [
+       "A",
+       "[[The main reason is that]] it helps young people get to everything else — the sports centre, concerts, school."
+      ],
+      [
+       "B",
+       "[[That's a good point]]. [[Shall we go for]] public transport, then?"
+      ]
+     ],
+     "c": "How could these things improve a town for young people?"
+    },
+    {
+     "topic": "Технологии",
+     "q": "Here are some areas of life that technology has changed. Talk to each other about how technology has changed these areas of people's lives.",
+     "prompts": [
+      "shopping",
+      "friendships",
+      "studying",
+      "work",
+      "free time"
+     ],
+     "q2": "In which area has technology had the most positive effect?",
+     "a": [
+      [
+       "A",
+       "[[Shall we start with]] shopping? Nowadays you can buy almost anything online without leaving your house."
+      ],
+      [
+       "B",
+       "[[Absolutely]]. [[Having said that]], I think some people miss going to real shops. [[What do you think]] about friendships?"
+      ],
+      [
+       "A",
+       "[[That's a tricky one]]. On the one hand, you can stay in touch with friends who live far away."
+      ],
+      [
+       "B",
+       "[[I see what you mean, but]] people spend less time together face to face. [[What about]] studying?"
+      ],
+      [
+       "A",
+       "There it's definitely positive. You can find information on anything in seconds, and there are lots of online courses."
+      ],
+      [
+       "B",
+       "[[I couldn't agree more]]. And work has changed too — lots of people work from home now."
+      ],
+      [
+       "A",
+       "True, although some people find it hard to stop working in the evening."
+      ]
+     ],
+     "a2": [
+      [
+       "A",
+       "[[So, which one shall we choose]]? [[I'd say]] studying."
+      ],
+      [
+       "B",
+       "[[It seems we both think]] studying has changed the most. I agree it's been mostly positive."
+      ],
+      [
+       "A",
+       "Great, [[shall we go for]] studying, then?"
+      ],
+      [
+       "B",
+       "Yes, studying."
+      ]
+     ],
+     "c": "How has technology changed these areas of people's lives?"
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "name": "Discussion",
+   "time": "4 минуты",
+   "what": "Экзаменатор задаёт вопросы, связанные с темой Part 3, — уже более общие и абстрактные. Можно отвечать самому и добавлять к ответу партнёра.",
+   "check": "Можешь ли ты развить мнение: объяснить, привести пример, посмотреть с двух сторон. Это самая «взрослая» часть.",
+   "tips": [
+    "Ответ на <b>30–45 секунд</b>: мнение → причина → пример → другая сторона.",
+    "Если вопрос задали партнёру, можно добавить: <i>Can I just add something?</i>",
+    "Нет мнения? Не говори «I don't know» — скажи <i>I've never really thought about it, but…</i> и порассуждай.",
+    "Говори о людях в целом, а не только о себе: <i>Generally speaking, young people…</i>"
+   ],
+   "mistakes": [
+    "«I don't know.» — конец ответа.",
+    "Ответ в одно предложение без причины.",
+    "Перебивать партнёра или полностью молчать, когда говорит он."
+   ],
+   "phrases": [
+    {
+     "t": "Обобщить",
+     "p": [
+      [
+       "Generally speaking, …",
+       "Вообще говоря, …"
+      ],
+      [
+       "In most cases, …",
+       "В большинстве случаев…"
+      ],
+      [
+       "It depends on…",
+       "Это зависит от…"
+      ],
+      [
+       "On the whole, …",
+       "В целом, …",
+       2
+      ]
+     ]
+    },
+    {
+     "t": "Две стороны",
+     "p": [
+      [
+       "On the one hand…, on the other hand…",
+       "С одной стороны…, с другой стороны…"
+      ],
+      [
+       "There are pros and cons.",
+       "Есть плюсы и минусы."
+      ],
+      [
+       "It's a double-edged sword.",
+       "Это палка о двух концах.",
+       2
+      ]
+     ]
+    },
+    {
+     "t": "Будущее и «если бы»",
+     "p": [
+      [
+       "If…, I think people would…",
+       "Если бы…, думаю, люди бы…"
+      ],
+      [
+       "In the future, it's likely that…",
+       "В будущем, вероятно, …"
+      ],
+      [
+       "I wouldn't be surprised if…",
+       "Я бы не удивился, если бы…",
+       2
+      ]
+     ]
+    },
+    {
+     "t": "Подхватить партнёра",
+     "p": [
+      [
+       "Can I just add something?",
+       "Можно я добавлю?"
+      ],
+      [
+       "I agree with what … said about…",
+       "Я согласен с тем, что … сказал про…"
+      ],
+      [
+       "Going back to what you said, …",
+       "Возвращаясь к тому, что ты сказал, …",
+       2
+      ]
+     ]
+    }
+   ],
+   "questions": [
+    {
+     "topic": "Здоровье",
+     "q": "Do you think schools should do more to help students stay healthy?",
+     "a": "Yes, [[I firmly believe that]] they should. [[The main reason is that]] students spend most of their day at school, so it has a huge influence on their habits. [[For example]], schools could offer healthier food in the canteen or more PE lessons. [[Having said that]], [[I'd say]] parents are just as responsible — schools can't do everything."
+    },
+    {
+     "topic": "Здоровье",
+     "q": "Why do you think some people find it difficult to exercise regularly?",
+     "a": "[[Generally speaking]], I think it's mainly about time. People work long hours, and when they get home, they're exhausted. [[What's more]], gyms can be quite expensive. [[On the other hand]], you don't really need a gym — you can go running for free. [[So]] maybe it's also about motivation."
+    },
+    {
+     "topic": "Навыки",
+     "q": "Is it better to learn practical skills at school or at home?",
+     "a": "[[That's a tricky one]]. [[On the one hand]], parents can teach things like cooking in a more relaxed way. [[On the other hand]], not all parents have the time or the skills. [[That's why I think]] schools should at least teach the basics, so that everyone has the same chance."
+    },
+    {
+     "topic": "Навыки",
+     "q": "Some people say that young people today have fewer practical skills than in the past. Do you agree?",
+     "a": "[[To some extent]], yes. My grandparents can fix almost anything, while I'd just look for a video online! [[However]], young people have other skills — [[for instance]], we're much better with technology. [[So, all in all]], [[I'd say]] the skills have changed rather than disappeared."
+    },
+    {
+     "topic": "Город",
+     "q": "Would you prefer to live in a big city or a small town in the future?",
+     "a": "[[Personally, I'd say]] a big city, at least while I'm young. [[That's because]] there are more opportunities for work and study, and there's always something to do. [[Having said that]], I can imagine moving to a small town when I'm older, because life there is calmer and cheaper."
+    },
+    {
+     "topic": "Город",
+     "q": "Who should be responsible for making towns better for young people — the government or young people themselves?",
+     "a": "[[I think]] it should be both. The government has the money, so it should pay for things like sports centres and transport. [[But]] young people should also be involved, because they know best what they need. [[For example]], in some towns teenagers can vote on how part of the budget is spent, which [[I'd say]] is a great idea."
+    },
+    {
+     "topic": "Технологии",
+     "q": "Do you think people will still read printed books in the future?",
+     "a": "[[I'm not entirely sure, but I'd guess]] yes. Lots of people, including me, still love the feeling of a real book. [[However]], [[I wouldn't be surprised if]] printed books became more of a luxury, like vinyl records. [[In most cases]], people will probably read on screens."
+    },
+    {
+     "topic": "Технологии",
+     "q": "Some people say we rely too much on technology. What do you think?",
+     "a": "[[I'd agree to some extent]]. [[Take]] navigation [[for example]] — hardly anyone can read a paper map anymore. If the internet stopped working for a day, [[I think people would]] panic! [[On the other hand]], technology makes our lives so much easier. [[It's a double-edged sword]], really."
+    },
+    {
+     "topic": "Свободное время",
+     "q": "Do you think young people have enough free time nowadays?",
+     "a": "[[Honestly]], I don't think so. Between school, homework and extra classes, many teenagers are busy from morning till night. [[What's more]], they often feel they have to be productive all the time. [[I firmly believe that]] free time is important — it's when you actually rest and become creative."
+    },
+    {
+     "topic": "Путешествия",
+     "q": "Is it important for young people to travel to other countries?",
+     "a": "Yes, [[I'd say]] it's really valuable. [[That's because]] travelling helps you understand other cultures and become more independent. [[For example]], when I went abroad for the first time, I had to speak English in real situations, which boosted my confidence. [[However]], [[it depends on]] money — not everyone can afford it."
+    }
+   ]
+  }
+ ]
+}

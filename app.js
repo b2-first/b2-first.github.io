@@ -33,13 +33,15 @@ const ICON = {
   up: svgI('<path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/>'),
   medal: svgI('<circle cx="12" cy="15" r="6"/><path d="M8.5 10.2 6 2.5h4l2 4.5 2-4.5h4l-2.5 7.7M12 12.5v5"/>'),
   sheet: svgI('<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/>'),
+  mic: svgI('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/>'),
+  starO: svgI('<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/>'),
   bulb: svgI('<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>')
 };
 
 /* ========== storage: account (db) or this browser ========== */
-const KEYS = ['words', 'reading', 'writing', 'meta'];
+const KEYS = ['words', 'reading', 'writing', 'speaking', 'meta'];
 const Store = {
-  data: { words: {}, reading: { results: {}, run: null }, writing: { drafts: {}, history: [] }, meta: {} },
+  data: { words: {}, reading: { results: {}, run: null }, writing: { drafts: {}, history: [] }, speaking: { fav: {} }, meta: {} },
   cloud: null, uid: null, timers: {}, busy: {}, again: {},
   loadLocal() {
     for (const k of KEYS) { try { const v = JSON.parse(localStorage.getItem('b2:' + k)); if (v && typeof v === 'object') Object.assign(this.data[k], v); } catch (e) {} }
@@ -241,10 +243,10 @@ function checkBadges(silent) {
 }
 
 /* ========== data ========== */
-let W = null, R = null, WR = null;
+let W = null, R = null, WR = null, SP = null;
 async function loadData() {
   const get = u => fetch(u).then(r => { if (!r.ok) throw new Error(u); return r.json(); });
-  [W, R, WR] = await Promise.all([get('data/words.json'), get('data/reading.json'), get('data/writing.json')]);
+  [W, R, WR, SP] = await Promise.all([get('data/words.json'), get('data/reading.json'), get('data/writing.json'), get('data/speaking.json')]);
   W.byId = {}; for (const w of W.words) W.byId[w.id] = w;
 }
 
@@ -273,10 +275,11 @@ function renderNav(h) {
     ['s', 'Слова'], ['a', 'Upgrade', 'words-up', W ? learned('up') + '/' + n.up : '', 'up', '--c-words'], ['a', 'Тетрадь', 'words-nb', W ? learned('nb') + '/' + n.nb : '', 'list', '--c-words'], ['a', 'Словарь B2 · A–Z', 'words-b2', W ? learned('b2') + '/' + n.b2 : '', 'cards', '--c-words'],
     ['s', 'Reading & Use of English'], ['a', 'Вариант 1 · все части', 'reading', Object.keys(res).length + '/7', 'book', '--c-reading'],
     ['s', 'Writing'], ['a', 'Шпаргалки', 'writing', '', 'sheet', '--c-writing'], ['a', WRITE_LABEL, 'write', '', 'pen', '--c-writing'],
+    ['s', 'Speaking'], ['a', 'Фразы и части', 'speaking', '', 'mic', '--c-speaking'], ['a', 'Мои фразы', 'speak-fav', String(Object.keys(Store.data.speaking.fav || {}).length || ''), 'star', '--c-speaking'],
     ['s', 'Прогресс'], ['a', 'Достижения', 'badges', got + '/' + BADGES.length, 'medal', '--gold-deep']
   ];
   $('#nav').innerHTML = items.map(it => it[0] === 's' ? '<div class="nav-h">' + esc(it[1]) + '</div>'
-    : '<a href="#' + it[2] + '" class="' + ((h === it[2] || (it[2] === 'write' && h.startsWith('write-')) || (it[2] === 'writing' && h.startsWith('fmt-')) || (it[2] === 'reading' && (h.startsWith('part-') || h === 'full-test'))) ? 'on' : '') + '"><span class="ni" style="--c:var(' + it[5] + ')">' + ICON[it[4]] + '</span><span class="lb">' + esc(it[1]) + '</span>' + (it[3] ? '<span class="cnt">' + esc(it[3]) + '</span>' : '') + '</a>').join('');
+    : '<a href="#' + it[2] + '" class="' + ((h === it[2] || (it[2] === 'write' && h.startsWith('write-')) || (it[2] === 'writing' && h.startsWith('fmt-')) || (it[2] === 'speaking' && h.startsWith('speak-') && h !== 'speak-fav') || (it[2] === 'reading' && (h.startsWith('part-') || h === 'full-test'))) ? 'on' : '') + '"><span class="ni" style="--c:var(' + it[5] + ')">' + ICON[it[4]] + '</span><span class="lb">' + esc(it[1]) + '</span>' + (it[3] ? '<span class="cnt">' + esc(it[3]) + '</span>' : '') + '</a>').join('');
   renderHud();
 }
 
@@ -298,12 +301,124 @@ function route() {
   if (h === 'full-test') return Exam('full', [1, 2, 3, 4, 5, 6, 7]);
   if (h === 'writing') return WritingHub();
   if (h === 'badges') return Badges();
+  if (h === 'speaking') return SpeakingHub();
+  if (h === 'speak-phrases') return SpeakPhrases();
+  if (h === 'speak-fav') return SpeakFav();
+  if (/^speak-[1-4]$/.test(h)) return SpeakPart(+h.slice(6));
+  if (/^speak-p[1-4]$/.test(h)) return SpeakPractice(+h.slice(7));
   if (h.startsWith('fmt-')) return Sheet(h.slice(4));
   if (h === 'write') return Write(null);
   if (h.startsWith('write-')) return Write(h.slice(6));
   Home();
 }
 window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
+
+/* ========== speaking ========== */
+const favs = () => Store.data.speaking.fav || (Store.data.speaking.fav = {});
+const SPC = 'style="--accent:var(--c-speaking);--accent-deep:var(--c-speaking-deep)"';
+function phraseRows(groups) {
+  const f = favs();
+  return groups.map(g => '<section class="card phr-g"><h3>' + esc(g.t) + '</h3>' + (g.note ? '<p class="muted small">' + esc(g.note) + '</p>' : '') +
+    '<ul class="phl">' + g.p.map(([en, ru, lvl]) => '<li><div class="phr-t"><b>' + esc(en) + (lvl === 2 ? ' <span class="lvl" title="Посложнее — звучит на B2+">B2+</span>' : '') + '</b><span class="muted">' + esc(ru) + '</span></div>' +
+      '<button type="button" class="star' + (f[en] ? ' on' : '') + '" data-fav="' + esc(en) + '" data-ru="' + esc(ru) + '" aria-pressed="' + !!f[en] + '" aria-label="' + (f[en] ? 'Убрать из моих фраз' : 'Добавить в мои фразы') + '">' + (f[en] ? ICON.star : ICON.starO) + '</button></li>').join('') + '</ul></section>').join('');
+}
+function bindStars(after) {
+  view.querySelectorAll('[data-fav]').forEach(b => b.onclick = () => {
+    const f = favs(), en = b.dataset.fav;
+    if (f[en]) delete f[en]; else f[en] = { ru: b.dataset.ru, t: Date.now() };
+    Store.save('speaking');
+    const on = !!f[en];
+    b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', on ? 'Убрать из моих фраз' : 'Добавить в мои фразы'); b.innerHTML = on ? ICON.star : ICON.starO;
+    if (on && !reduced()) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
+    renderNav((location.hash || '#').slice(1));
+    if (after) after();
+  });
+}
+const backTo = (href, label) => '<a class="btn sm ghost" href="#' + href + '" style="align-self:flex-start">' + ICON.back + esc(label) + '</a>';
+const nQ = n => n + ' ' + plural(n, 'вопрос', 'вопроса', 'вопросов');
+function SpeakingHub() {
+  const nf = Object.keys(favs()).length;
+  view.innerHTML = '<div class="page"><div class="head"><div><div class="muted small">Speaking</div><h1>Фразы и тренажёр</h1></div></div>' +
+    '<div class="cont" ' + SPC + '><div><div class="lbl">Начни с главного</div><div class="big">Фразы, которые подходят к любой части</div></div><a class="btn lg" href="#speak-phrases">Открыть →</a></div>' +
+    '<div class="grid2">' + SP.parts.map(p => '<a class="card tile" href="#speak-' + p.n + '" style="--c:var(--c-speaking)"><div class="muted small">Part ' + p.n + ' · ' + esc(p.time) + '</div><h3>' + esc(p.name) + '</h3><p class="muted small">' + p.what + '</p><span class="go">Фразы, советы и ' + nQ(p.questions.length) + ' →</span></a>').join('') + '</div>' +
+    '<a class="card tile sp-fav" href="#speak-fav" style="--c:var(--gold-deep)"><span class="sp-star">' + ICON.star + '</span><div><h3>Мои фразы</h3><p class="muted small">' + (nf ? nf + ' ' + plural(nf, 'фраза', 'фразы', 'фраз') + ' — повтори перед экзаменом' : 'Отмечай ☆ фразы, которые хочешь выучить') + '</p></div><span class="go">→</span></a>' +
+    '<div class="card"><h3 style="margin-bottom:10px">Как устроен Speaking в B2 First</h3><ul class="ls">' + SP.about.map(x => '<li>' + x + '</li>').join('') + '</ul></div>' +
+    '</div>';
+  hint('speaking');
+}
+function SpeakPhrases() {
+  setLast('speak-phrases', 'Speaking · фразы на все части');
+  view.innerHTML = '<div class="page narrow">' + backTo('speaking', 'Speaking') +
+    '<div class="head"><div><div class="muted small">Speaking · для всех частей</div><h1>Главные фразы</h1></div></div>' +
+    '<p class="muted">Только то, что реально пригодится. <span class="lvl">B2+</span> — посложнее, такие фразы особенно нравятся экзаменаторам. Жми ☆, чтобы добавить фразу в «Мои фразы».</p>' +
+    phraseRows(SP.general) +
+    '<h2>Фразы для каждой части</h2><div class="grid2">' + SP.parts.map(p => '<a class="card tile" href="#speak-' + p.n + '" style="--c:var(--c-speaking)"><div class="muted small">Part ' + p.n + '</div><h3>' + esc(p.name) + '</h3><span class="go">Открыть →</span></a>').join('') + '</div></div>';
+  bindStars();
+}
+function SpeakPart(n) {
+  const p = SP.parts[n - 1];
+  setLast('speak-' + n, 'Speaking · Part ' + n + ' — ' + p.name);
+  view.innerHTML = '<div class="page">' + backTo('speaking', 'Speaking') +
+    '<div class="head"><div><div class="muted small">Speaking · Part ' + n + ' · ' + esc(p.time) + '</div><h1>' + esc(p.name) + '</h1></div>' +
+    '<a class="btn pri" href="#speak-p' + n + '" ' + SPC + '>' + ICON.mic + 'Тренажёр · ' + nQ(p.questions.length) + '</a></div>' +
+    '<div class="grid2"><div class="card"><b>Что происходит</b><p class="muted" style="margin-top:6px">' + p.what + '</p></div><div class="card"><b>Что проверяют</b><p class="muted" style="margin-top:6px">' + esc(p.check) + '</p></div></div>' +
+    '<div class="grid2"><div class="card"><h3 style="margin-bottom:10px">Советы</h3><ul class="ls">' + p.tips.map(t => '<li>' + t + '</li>').join('') + '</ul></div>' +
+    '<div class="card"><h3 style="margin-bottom:10px">Типичные ошибки</h3><ul class="ls bad">' + p.mistakes.map(t => '<li>' + t + '</li>').join('') + '</ul></div></div>' +
+    '<h2>Фразы для Part ' + n + '</h2>' + phraseRows(p.phrases) +
+    '<a class="card tile" href="#speak-phrases" style="--c:var(--c-speaking)"><h3>Плюс общие фразы</h3><p class="muted small">Выиграть время, мнение, причина, контраст — подходят к любой части.</p><span class="go">Открыть →</span></a>' +
+    '<a class="btn pri lg" href="#speak-p' + n + '" style="--accent:var(--c-speaking);--accent-deep:var(--c-speaking-deep);align-self:center">' + ICON.mic + 'Перейти к тренажёру</a>' +
+    '</div>';
+  bindStars();
+  hint('speakpart');
+}
+function SpeakFav() {
+  const f = favs(), list = Object.entries(f).sort((a, b) => a[1].t - b[1].t);
+  view.innerHTML = '<div class="page narrow">' + backTo('speaking', 'Speaking') +
+    '<div class="head"><div><div class="muted small">Speaking</div><h1>Мои фразы</h1></div></div>' +
+    (list.length ? '<p class="muted">Повтори их вслух перед экзаменом. Попробуй вставить каждую в ответ на любой вопрос из тренажёра.</p>' + phraseRows([{ t: list.length + ' ' + plural(list.length, 'фраза', 'фразы', 'фраз'), p: list.map(([en, v]) => [en, v.ru]) }])
+      : '<div class="empty">Пока пусто. Открой <a href="#speak-phrases">главные фразы</a> или любую часть и нажми ☆ у фраз, которые хочешь выучить.</div>') + '</div>';
+  bindStars(SpeakFav);
+}
+const SPK = { n: 0, i: 0, show: false };
+function SpeakPractice(n) {
+  const p = SP.parts[n - 1], qs = p.questions;
+  if (SPK.n !== n) { SPK.n = n; SPK.i = 0; SPK.show = false; }
+  setLast('speak-p' + n, 'Speaking · Part ' + n + ' — тренажёр');
+  if (SPK.i >= qs.length) {
+    view.innerHTML = '<div class="page narrow"><div class="done"><div class="trophy">' + ICON.trophy + '</div><h1>Part ' + n + ' пройдена</h1>' +
+      '<p class="muted">Ты ответил на все ' + nQ(qs.length) + '. Вернись через пару дней и попробуй вставить новые фразы из шпаргалки.</p>' +
+      '<div class="actions"><button class="btn lg" id="again">Ещё раз</button><a class="btn pri lg" href="#speak-' + n + '">К Part ' + n + '</a></div></div></div>';
+    $('#again').onclick = () => { SPK.i = 0; SPK.show = false; SpeakPractice(n); };
+    return;
+  }
+  const q = qs[SPK.i], show = SPK.show;
+  const art = k => '<figure class="sp-photo">' + ((window.SPEAK_ART || {})[k] || '') + '</figure>';
+  const dlg = lines => '<div class="dlg">' + lines.map(([who, t]) => '<div class="say ' + (who === 'A' ? 'a' : 'b') + '"><span class="who">' + who + '</span><p>' + exHTML(t) + '</p></div>').join('') + '</div>';
+  let task = '', answer = '';
+  if (n === 2) {
+    task = '<div class="sp-q">' + esc(q.q) + '</div><div class="sp-photos">' + art(q.art[0]) + art(q.art[1]) + '</div>';
+    answer = '<div class="sp-a"><div class="lbl">Пример ответа · ~1 минута</div><p>' + exHTML(q.a) + '</p></div>' +
+      '<div class="sp-a"><div class="lbl">Вопрос партнёру · ~30 секунд</div><p class="sp-q2">' + esc(q.q2) + '</p><p class="muted small">Ответь сам коротко: <i>I’d prefer…, mainly because…</i></p></div>';
+  } else if (n === 3) {
+    task = '<p class="sp-note">' + esc(q.q) + '</p><div class="mind"><div class="mind-c">' + esc(q.c) + '</div><div class="mind-p">' + q.prompts.map(x => '<span>' + esc(x) + '</span>').join('') + '</div></div>';
+    answer = '<div class="sp-a"><div class="lbl">Пример обсуждения · 2 минуты</div>' + dlg(q.a) + '</div>' +
+      '<div class="sp-a"><div class="lbl">Потом экзаменатор спросит · 1 минута</div><p class="sp-q2">' + esc(q.q2) + '</p>' + dlg(q.a2) + '</div>';
+  } else {
+    task = '<div class="sp-q big">' + esc(q.q) + '</div>';
+    answer = '<div class="sp-a"><div class="lbl">Пример ответа · ' + (n === 1 ? '20–30 секунд' : '30–45 секунд') + '</div><p>' + exHTML(q.a) + '</p></div>';
+  }
+  const pct = SPK.i / qs.length * 100;
+  view.innerHTML = '<div class="page narrow lesson sp">' +
+    '<div class="lesson-top"><button class="x" id="back" type="button" aria-label="Выйти к Part ' + n + '">' + ICON.x + '</button><div class="bar" style="--c:var(--c-speaking)"><i style="width:' + pct.toFixed(1) + '%"></i></div></div>' +
+    '<div class="lesson-meta"><span class="eyebrow">Part ' + n + ' · ' + esc(q.topic) + ' · ' + (SPK.i + 1) + ' / ' + qs.length + '</span></div>' +
+    '<div class="spcard"><div class="lbl">' + ICON.mic + (n === 3 ? 'Обсудите вдвоём' : n === 2 ? 'Говори 1 минуту' : 'Экзаменатор спрашивает') + '</div>' + task +
+    (show ? '<div class="sp-reveal">' + answer + '</div>' : '<p class="sp-think">' + (n === 3 ? 'Представь, что говоришь с партнёром: начни, спроси его мнение, обсуди 3–4 варианта.' : 'Ответь вслух сам — по схеме «ответ → причина → пример». Потом сравни с примером.') + '</p>') + '</div>' +
+    '<div class="grades sticky">' + (show ? '<button class="btn pri lg" id="next" ' + SPC + '>' + (SPK.i + 1 < qs.length ? 'Следующий вопрос →' : 'Завершить') + '</button>'
+      : '<button class="btn pri lg" id="show" ' + SPC + '>Показать пример ответа <span class="kbd">Пробел</span></button>') + '</div></div>';
+  $('#back').onclick = () => { location.hash = 'speak-' + n; };
+  if (show) $('#next').onclick = () => { SPK.i++; SPK.show = false; SpeakPractice(n); window.scrollTo(0, 0); };
+  else $('#show').onclick = () => { SPK.show = true; SpeakPractice(n); };
+}
 
 /* ========== one-line section hints (first visit, dismissible) ========== */
 const touchUI = () => window.matchMedia('(pointer:coarse)').matches;
@@ -312,6 +427,8 @@ const HINTS = {
   reading: () => 'Выбери часть или весь вариант. Решай без подсказок, потом жми <b>«Проверить»</b> — покажем баллы и объясним каждый ответ.',
   writing: () => 'Открой шпаргалку формата: структура и готовые фразы. Потом жми <b>«' + WRITE_LABEL + '»</b>.',
   write: () => 'Нажми <b>«Старт 40 минут»</b>, как на экзамене, и следи за счётчиком слов. Черновик сохраняется сам.' + (IN_CLAUDE ? ' Готово — жми «Проверить с Claude».' : ''),
+  speaking: () => 'Начни с <b>общих фраз</b>, потом открой Part 1–4. Жми ☆ у фраз, которые хочешь выучить, — они соберутся в <b>«Мои фразы»</b>.',
+  speakpart: () => 'Нажми <b>«Тренажёр»</b>: читай вопрос, ответь вслух сам, потом сравни с примером ответа. Цветом выделены фразы из шпаргалки.',
   badges: () => 'XP: «Знаю» +1, верный ответ в тесте +2, Reading — баллы Cambridge. Набирай цель дня, чтобы огонёк серии не погас.'
 };
 function hint(key) {
@@ -349,10 +466,11 @@ function Home() {
     '</div>' +
     (last ? '<div class="cont"><div><div class="lbl">Продолжить</div><div class="big">' + esc(last.label) + '</div></div><a class="btn lg" href="#' + esc(last.hash) + '">Продолжить →</a></div>' :
       '<div class="cont"><div><div class="lbl">С чего начать</div><div class="big">Upgrade-слова: простое → сильное</div></div><a class="btn lg" href="#words-up">Начать →</a></div>') +
-    '<div class="grid3">' +
+    '<div class="secs">' +
     tile('words-up', '--c-words', 'cards', 'Слова', 'Словарь B2 по буквам A–Z, Upgrade (простое → сложное) и слова из тетради. Карточки, тесты, повтор ошибок.', 'Учить') +
     tile('reading', '--c-reading', 'book', 'Reading &amp; Use of English', 'Все 7 частей в формате экзамена, с таймером и объяснением каждого ответа.', 'Тренироваться') +
     tile('writing', '--c-writing', 'pen', 'Writing', (IN_CLAUDE ? 'Шпаргалки по 6 форматам и проверка твоего текста по критериям FCE.' : 'Шпаргалки по 6 форматам и тренировка письма с таймером и счётчиком слов.'), 'Писать') +
+    tile('speaking', '--c-speaking', 'mic', 'Speaking', 'Главные фразы для всех 4 частей и тренажёр: вопрос → твой ответ вслух → пример идеального ответа.', 'Говорить') +
     '</div></div>';
   $('#exDate').addEventListener('change', e => { d.meta.exam = e.target.value; Store.save('meta'); Home(); });
 }
@@ -570,6 +688,7 @@ function answerCard(g) {
 }
 function keyHandler(e) {
   if (e.target.closest('input,textarea,select')) return;
+  if (/^#speak-p[1-4]$/.test(location.hash) && (e.key === ' ' || e.key === 'Enter') && !e.target.closest('button,a')) { const b = $('#show') || $('#next'); if (b) { e.preventDefault(); b.click(); } return; }
   if (!/^#words/.test(location.hash || '#')) return;
   const S = WS.sess, T = WS.test;
   if (S && S.i < S.queue.length) {

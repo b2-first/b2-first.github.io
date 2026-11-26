@@ -45,6 +45,9 @@ COLOUR: purple-tinted neutrals; one action purple; semantic green / coral; flame
   --c-words:var(--accent);
   --c-reading:light-dark(oklch(64% .13 185),oklch(74% .12 185));
   --c-writing:light-dark(oklch(60% .21 355),oklch(74% .15 355));
+  --c-speaking:light-dark(oklch(58% .17 250),oklch(60% .15 250));
+  --c-speaking-deep:light-dark(oklch(46% .16 250),oklch(44% .13 250));
+  --c-speaking-ink:light-dark(oklch(44% .16 250),oklch(84% .09 250));
 
   --display:'Unbounded','Onest',system-ui,sans-serif;
   --ui:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;
@@ -594,7 +597,7 @@ a.chip:hover{border-color:var(--edge)}
   .page.home>*{grid-column:1/-1}
   .home .head,.home .grid4{display:contents}
   .home .head>div{order:0;grid-column:1/-1}
-  .home .grid3{order:1}
+  .home .secs{order:1}
   .home .cont{order:2}
   .home .goal-card{order:3;grid-column:1/-1}
   .home .grid4>.stat:not(.goal-card){order:4;grid-column:auto}
@@ -603,4 +606,68 @@ a.chip:hover{border-color:var(--edge)}
 }
 @media (max-width:600px){
   .home .grid4>.stat:not(.goal-card) b{font-size:22px}
+}
+
+/* ---------- home: section tiles ---------- */
+.secs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:1000px){.secs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.secs{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- speaking: phrase lists ---------- */
+.phr-g{display:flex;flex-direction:column;gap:4px}
+.phr-g>p{margin:0}
+.phl{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px}
+.phl li{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.phl li:nth-child(-n+2){border-top:0}
+@media (max-width:700px){.phl{grid-template-columns:minmax(0,1fr)}.phl li:nth-child(2){border-top:1px solid var(--line)}}
+.phr-t{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.phr-t b{font-weight:700;font-size:16px;color:var(--ink)}
+.phr-t .muted{font-size:14px}
+.lvl{display:inline-block;vertical-align:2px;margin-left:4px;padding:1px 7px;border-radius:999px;font:800 11px/1.5 var(--ui);letter-spacing:.04em;background:color-mix(in oklch,var(--c-speaking) 15%,transparent);color:var(--c-speaking-ink);white-space:nowrap}
+.star{flex:none;width:42px;height:42px;border:0;border-radius:12px;background:none;color:var(--muted);display:grid;place-items:center;cursor:pointer}
+.star:hover{background:var(--surface2);color:var(--gold-deep)}
+.star:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
+.star.on{color:var(--gold)}
+.star svg{width:22px;height:22px}
+.star.pop svg{animation:starPop .4s var(--spring)}
+@keyframes starPop{0%{transform:scale(.5)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+ul.ls.bad li::marker{color:var(--bad)}
+.sp-fav{flex-direction:row;align-items:center;gap:14px}
+.sp-fav>div{flex:1}
+.sp-fav .go{margin-top:0}
+.sp-star{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--gold);color:#fff;flex:none;box-shadow:0 3px 0 var(--gold-deep)}
+.sp-star svg{width:24px;height:24px}
+
+/* ---------- speaking: practice ---------- */
+.spcard{width:100%;max-width:720px;margin:0 auto;background:var(--surface);border:2px solid var(--line);border-radius:24px;padding:clamp(20px,4vw,32px);display:flex;flex-direction:column;gap:14px;animation:cardIn .38s var(--out) both}
+.spcard .lbl{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--c-speaking-ink);background:color-mix(in oklch,var(--c-speaking) 14%,transparent);padding:5px 12px;border-radius:999px}
+.spcard .lbl svg{width:14px;height:14px}
+.sp-q{font-family:var(--display);font-size:clamp(17px,3vw,21px);font-weight:700;line-height:1.35}
+.sp-q.big{font-size:clamp(22px,4.4vw,30px)}
+.sp-think{margin:0;color:var(--soft);font-size:15px;padding:12px 14px;border-radius:14px;background:var(--surface2)}
+.sp-reveal{display:flex;flex-direction:column;gap:18px;border-top:2px dashed var(--line);padding-top:18px;animation:rise .35s var(--out) both}
+.sp-a{display:flex;flex-direction:column;gap:10px}
+.sp-a>p{margin:0;font-family:var(--serif);font-size:18px;line-height:1.65}
+.sp-a b,.dlg b{font-weight:600;color:var(--c-speaking-ink);background:color-mix(in oklch,var(--c-speaking) 13%,transparent);border-radius:4px;padding:0 2px;margin:0 -2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.sp-a>p.muted{font-family:var(--ui)}
+.sp-q2{font-family:var(--ui)!important;font-weight:800;font-size:17px!important}
+.sp-photos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sp-photo{margin:0;border-radius:14px;overflow:hidden;border:2px solid var(--line);aspect-ratio:320/220;background:var(--surface2)}
+.sp-photo svg{display:block;width:100%;height:100%}
+.sp-note{margin:0;color:var(--muted);font-size:14px}
+.mind{display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px 14px;border-radius:18px;background:var(--surface2)}
+.mind-c{max-width:440px;text-align:center;font-weight:800;font-size:17px;line-height:1.35;padding:14px 18px;border-radius:16px;background:var(--c-speaking);color:#fff;box-shadow:0 4px 0 var(--c-speaking-deep)}
+.mind-p{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.mind-p span{padding:8px 14px;border-radius:999px;background:var(--surface);border:2px solid var(--line);font-weight:700;font-size:14px}
+.dlg{display:flex;flex-direction:column;gap:8px}
+.say{display:flex;gap:10px;align-items:flex-start;max-width:92%}
+.say.b{align-self:flex-end;flex-direction:row-reverse}
+.say .who{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;background:var(--c-speaking)}
+.say.b .who{background:color-mix(in oklch,var(--c-reading) 78%,black)}
+.say p{margin:0;padding:10px 14px;border-radius:16px;border-top-left-radius:4px;background:var(--surface2);font-size:15px;line-height:1.5}
+.say.b p{border-top-left-radius:16px;border-top-right-radius:4px;background:color-mix(in oklch,var(--c-reading) 12%,var(--surface))}
+@media (max-width:600px){
+  .sp-photos{grid-template-columns:minmax(0,1fr)}
+  .sp-a>p{font-size:17px}
+  .say{max-width:100%}
 }
