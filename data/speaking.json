@@ -370,6 +370,166 @@
      "topic": "Распорядок",
      "q": "Are you a morning person?",
      "a": "Not at all! [[I can't stand]] getting up early. [[Having said that]], I've noticed that I study much better in the morning, so I'm trying to change my habits."
+    },
+    {
+     "topic": "Родной город",
+     "q": "Where are you from?",
+     "a": "I'm from a medium-sized town about two hours from the capital. [[It's not exactly famous]], but it has a lovely old centre and a big river, so it's really pretty in summer. [[I've lived there all my life]], so I know almost everyone in my street!"
+    },
+    {
+     "topic": "Родной город",
+     "q": "What do you like most about living in your town?",
+     "a": "[[I'd say]] it's how calm it is. [[Unlike]] big cities, there are no traffic jams, and you can walk almost everywhere. [[The only downside is that]] there isn't much to do in the evenings, so sometimes my friends and I get a bit bored."
+    },
+    {
+     "topic": "Родной город",
+     "q": "Is your town a good place for young people?",
+     "a": "[[Not really, to be honest]]. There's a cinema and a couple of cafés, [[but]] that's about it. [[If I could change one thing]], I'd open a proper sports centre, [[because]] at the moment we have to travel to the next town to go swimming."
+    },
+    {
+     "topic": "Дом",
+     "q": "Tell us about your favourite room in your home.",
+     "a": "[[It has to be]] my bedroom. It's quite small, [[but]] it's the only place where I can be on my own. I've put lots of photos and posters on the walls, so it really feels like my space. [[That's where]] I study, listen to music and relax."
+    },
+    {
+     "topic": "Свободное время",
+     "q": "What did you do last weekend?",
+     "a": "[[Let me think]]… On Saturday I had to do some homework, [[but]] in the evening I went to a friend's birthday party, which was great fun. On Sunday I [[didn't do much]] — I just got up late and took my dog for a long walk."
+    },
+    {
+     "topic": "Свободное время",
+     "q": "Is there a hobby you would like to try?",
+     "a": "Yes, [[I've always wanted to]] try rock climbing. A friend of mine goes every week, and [[she says]] it's not as difficult as it looks. [[I think]] it would be a good way to get fit and challenge myself at the same time."
+    },
+    {
+     "topic": "Спорт",
+     "q": "Do you like doing sport?",
+     "a": "Yes, [[I'm quite keen on]] sport. I play volleyball twice a week with a team from my school. [[What I like most is that]] it's a team game, so you have to work together. [[Besides]], it helps me forget about stress after a long day."
+    },
+    {
+     "topic": "Спорт",
+     "q": "Do you prefer watching sport or doing it?",
+     "a": "Doing it, [[definitely]]. [[To be honest]], I find watching sport on TV quite boring, [[unless]] it's a really important match. [[I'd much rather]] be out on the pitch myself than sitting on the sofa."
+    },
+    {
+     "topic": "Музыка",
+     "q": "What kind of music do you enjoy listening to?",
+     "a": "[[It depends on]] my mood, [[really]]. When I'm studying, I listen to calm music without any words, [[because otherwise]] I can't concentrate. [[But]] when I'm at the gym, I prefer something with a strong beat, like pop or hip hop."
+    },
+    {
+     "topic": "Музыка",
+     "q": "Have you ever been to a concert?",
+     "a": "Yes, [[a couple of times]]. The best one was last year, when I saw my favourite band live with my cousin. [[The atmosphere was amazing]] — everyone was singing along. [[I'd love to]] go to a music festival [[one day]], too."
+    },
+    {
+     "topic": "Фильмы и ТВ",
+     "q": "Tell us about a film you have seen recently.",
+     "a": "[[Last week]] I watched a science fiction film about a group of astronauts who get lost in space. [[To be honest]], the story was a bit predictable, [[but]] the special effects were incredible. [[I'd recommend it]] if you like action films."
+    },
+    {
+     "topic": "Фильмы и ТВ",
+     "q": "Do you prefer watching films at home or at the cinema?",
+     "a": "[[On the whole]], [[I prefer]] watching films at home. It's cheaper, and I can pause the film whenever I want. [[Having said that]], some films are much better on a big screen, so I still go to the cinema [[now and then]]."
+    },
+    {
+     "topic": "Чтение",
+     "q": "Do you enjoy reading?",
+     "a": "[[I used to]] read a lot when I was younger, [[but]] now I don't have much time. [[These days]] I mostly read articles online. [[That said]], I always take a book with me on holiday — it's the only time I can really relax and read."
+    },
+    {
+     "topic": "Учёба",
+     "q": "Tell us about a teacher you remember well.",
+     "a": "[[I'll never forget]] my primary school teacher. She was really patient and always found time to help us. [[What I remember most is that]] she made every lesson feel like a game, [[which is probably why]] I still enjoy learning."
+    },
+    {
+     "topic": "Учёба",
+     "q": "Do you prefer studying alone or with other people?",
+     "a": "[[Generally speaking]], [[I'd rather]] study alone, [[because]] I get distracted too easily when my friends are around. [[However]], before exams we sometimes meet up to test each other, and [[that's actually really useful]]."
+    },
+    {
+     "topic": "Английский",
+     "q": "How long have you been learning English?",
+     "a": "[[I've been learning]] English since I was seven, so for about nine years now. [[At first]], it was just a school subject, [[but]] when I started watching series in English, I realised how useful it is. Now I'm preparing for the B2 First exam."
+    },
+    {
+     "topic": "Английский",
+     "q": "How do you think English will be useful for you in the future?",
+     "a": "[[In lots of ways]]. [[First of all]], I'm hoping to study abroad, so I'll need it at university. [[Apart from that]], English is useful in almost any job nowadays. [[And of course]], it makes travelling much easier."
+    },
+    {
+     "topic": "Семья и друзья",
+     "q": "Who are you most similar to in your family?",
+     "a": "[[People say]] I'm very similar to my dad. We both love sport and we're both quite stubborn, [[to be honest]]! [[But]] I've got my mum's sense of humour, so I suppose I'm a mix of both of them."
+    },
+    {
+     "topic": "Семья и друзья",
+     "q": "Do you prefer spending time with one close friend or with a large group?",
+     "a": "[[It depends]]. If I want to have a serious conversation, [[I'd rather]] meet one close friend. [[On the other hand]], for parties or trips, a big group is more fun, [[because]] there's always someone to talk to."
+    },
+    {
+     "topic": "Путешествия",
+     "q": "Is there a country you would really like to visit?",
+     "a": "Yes, [[I've always dreamt of]] going to Japan. [[I'm really into]] Japanese food and culture, and I'd love to see Tokyo for myself. [[The only problem is that]] it's very far away and quite expensive, so I'll have to save up."
+    },
+    {
+     "topic": "Транспорт",
+     "q": "How do you usually get to school or work?",
+     "a": "[[Most of the time]] I take the bus — it takes about twenty minutes. [[When the weather's nice]], [[though]], I cycle instead, [[because]] it's quicker and I don't have to wait at the bus stop."
+    },
+    {
+     "topic": "Технологии",
+     "q": "What do you use the internet for most?",
+     "a": "[[Mainly]] for keeping in touch with my friends and watching videos. [[But]] I also use it a lot for studying — [[for instance]], I look up words I don't know and watch videos that explain grammar. [[I can't imagine]] life without it!"
+    },
+    {
+     "topic": "Еда",
+     "q": "Is there any food you really don't like?",
+     "a": "[[Actually]], yes — I can't stand mushrooms. [[I know]] lots of people love them, [[but]] I don't like the texture at all. My grandmother always puts them in her soup, so I have to pick them out without her noticing!"
+    },
+    {
+     "topic": "Покупки",
+     "q": "Do you enjoy shopping?",
+     "a": "[[Not really]]. [[I find it]] quite tiring, especially in big shopping centres at the weekend when they're really crowded. [[I tend to]] know exactly what I want, so I go in, buy it and leave as quickly as possible."
+    },
+    {
+     "topic": "Покупки",
+     "q": "Do you prefer shopping online or in shops?",
+     "a": "[[For most things]], online, [[because]] it saves a lot of time and there's more choice. [[However]], when it comes to clothes, [[I prefer]] going to a shop, [[since]] I want to try things on before I buy them."
+    },
+    {
+     "topic": "Погода",
+     "q": "What is your favourite time of year?",
+     "a": "[[I'd have to say]] summer. [[The main reason is that]] the days are long and there's no school, so I can spend lots of time outdoors. [[I'm not a big fan of]] winter — it gets dark at four o'clock, which I find quite depressing."
+    },
+    {
+     "topic": "Праздники",
+     "q": "How do you usually celebrate your birthday?",
+     "a": "[[Nothing special, really]]. [[Usually]] I have dinner with my family, and then at the weekend I invite a few friends to go bowling or to a café. [[For my next birthday]], [[though]], I'm planning something bigger, because I'll be eighteen!"
+    },
+    {
+     "topic": "Праздники",
+     "q": "Tell us about a special day you remember.",
+     "a": "[[One day I'll never forget]] is my sister's wedding two years ago. The whole family came, [[even]] relatives I hadn't seen for years. [[What made it so special was that]] everyone was so happy, and we danced until midnight."
+    },
+    {
+     "topic": "Распорядок",
+     "q": "What is a typical weekday like for you?",
+     "a": "[[Pretty busy, to be honest]]. I get up at seven, go to school, and after lessons I have football training [[or]] an English class. [[By the time]] I get home, it's usually about seven in the evening, so I just do my homework and go to bed."
+    },
+    {
+     "topic": "Планы",
+     "q": "Do you think you will live in your town in the future?",
+     "a": "[[Probably not]]. [[I'm hoping to]] go to university in a bigger city, and [[there aren't many jobs]] in my town for young people. [[Having said that]], I'd like to come back when I'm older, [[because]] it's a great place to bring up children."
+    },
+    {
+     "topic": "Планы",
+     "q": "What are you planning to do next summer?",
+     "a": "[[If everything goes well]], I'm going to a summer camp by the sea with some friends. [[Apart from that]], I'd like to find a part-time job, [[so that]] I can save some money for a new laptop."
+    },
+    {
+     "topic": "Работа",
+     "q": "What kind of job would you like to do in the future?",
+     "a": "[[I'm not completely sure yet]], [[but]] I'm interested in something connected with design. [[I've always been good at]] drawing, and I like the idea of creating things people actually use. [[Whatever I do]], I'd like a job where I can travel."
     }
    ]
   },
@@ -503,6 +663,36 @@
      "q": "Compare the photographs and say why people might choose to eat in these different ways.",
      "q2": "Do you prefer eating at home or in a restaurant? Why?",
      "a": "[[Both pictures show]] people having a meal together. [[In the first picture]], a family is cooking at home, [[whereas in the second]] a group of friends is eating in a restaurant. [[It looks as if]] the family is having a lot of fun — even the child is helping. People might choose to cook at home because it's healthier and much cheaper. [[Apart from that]], cooking together can bring a family closer. [[Unlike the family in the first photo]], the friends in the restaurant don't have to do any work. [[They might be]] celebrating something, like a birthday. Eating out is more convenient, and you can try dishes you can't make yourself. [[However]], it can be quite expensive. [[So, all in all]], I think it depends on the occasion."
+    },
+    {
+     "art": [
+      "football",
+      "running"
+     ],
+     "topic": "Спорт",
+     "q": "Compare the photographs and say why people might choose to do sport in these different ways.",
+     "q2": "Which of these sports would you prefer to do? Why?",
+     "a": "[[Both photographs show]] people doing sport, but in completely different ways. [[In the first one]], two teams are playing football, [[whereas in the second]], a young woman is running on her own in a park. [[I'd say]] people choose team sports like football [[because]] they enjoy being part of a group. [[It looks as if]] the players are having a great time — one of them has just scored a goal! [[On the other hand]], the woman [[might have chosen]] running because it's flexible: she can go whenever she wants and doesn't need anyone else. [[She seems to be]] enjoying the fresh air and the peace and quiet. [[Having said that]], it's probably harder to stay motivated when you're alone. [[So, all in all]], [[I'd say]] it depends on whether you prefer company or freedom."
+    },
+    {
+     "art": [
+      "cycling",
+      "bus"
+     ],
+     "topic": "Транспорт",
+     "q": "Compare the photographs and say what the advantages and disadvantages of travelling around a city in these ways might be.",
+     "q2": "How do you usually travel around your town? Why?",
+     "a": "[[Both pictures show]] people travelling around a city. [[In the first picture]], a young man is cycling along a cycle lane, [[while in the second]], people are standing on a crowded bus. [[The main advantage of]] cycling is that it's healthy and free, and you don't get stuck in traffic — [[it looks as if]] the cars behind him are hardly moving. [[However]], cycling isn't much fun when it's raining, and it can be dangerous on busy roads. [[As for]] the bus, it's cheap and you can travel in any weather. [[On the other hand]], [[it seems to be]] really crowded, so the passengers [[probably feel]] a bit uncomfortable. [[Perhaps]] they're on their way to work in the rush hour. [[Overall]], [[I'd say]] each way has its pros and cons."
+    },
+    {
+     "art": [
+      "market",
+      "mall"
+     ],
+     "topic": "Покупки",
+     "q": "Compare the photographs and say why people might choose to go shopping in these places.",
+     "q2": "Where do you prefer to go shopping? Why?",
+     "a": "[[Both photographs show]] people shopping, but in very different places. [[The first one]] was taken at an outdoor market, [[whereas the second]] shows a modern shopping centre. [[I imagine]] people go to markets [[because]] the food is fresh and often cheaper. [[What's more]], you can chat to the sellers, so it's a more personal experience. [[It looks as if]] the woman is choosing some fruit. [[In contrast]], people might choose a shopping centre [[because]] everything is in one place and it's warm inside, even in winter. The two girls in the second picture [[seem to be]] enjoying themselves — they're carrying lots of bags. [[Having said that]], shopping centres can be really crowded and noisy. [[So, all in all]], [[I'd say]] markets are better for food, and shopping centres are better for clothes."
     }
    ]
   },
@@ -884,6 +1074,266 @@
       ]
      ],
      "c": "How has technology changed these areas of people's lives?"
+    },
+    {
+     "topic": "Окружающая среда",
+     "q": "Here are some things people can do to help the environment. Talk to each other about how these things can help the environment.",
+     "c": "How can these things help the environment?",
+     "prompts": [
+      "recycling",
+      "using public transport",
+      "buying fewer clothes",
+      "saving energy at home",
+      "eating less meat"
+     ],
+     "q2": "Which of these things would be the easiest for most people to do?",
+     "a": [
+      [
+       "A",
+       "[[Shall I go first?]] Recycling is probably the most obvious one. It means less rubbish ends up in the ground."
+      ],
+      [
+       "B",
+       "[[That's true]], [[but]] I'm not sure how many people really recycle. [[What do you think]] about using public transport?"
+      ],
+      [
+       "A",
+       "[[If you ask me]], it makes a huge difference. If more people took the bus instead of driving, there would be less pollution in cities."
+      ],
+      [
+       "B",
+       "[[Exactly!]] And saving energy at home is similar — switching off the lights and the heating when you don't need them."
+      ],
+      [
+       "A",
+       "[[That's a good point]]. It saves money too, so people have a reason to do it. [[How do you feel about]] buying fewer clothes?"
+      ],
+      [
+       "B",
+       "[[To be honest]], I'd never thought about it, [[but]] I've read that making clothes uses a lot of water."
+      ],
+      [
+       "A",
+       "Yes, and lots of cheap clothes are thrown away after a few months. [[What about this one]] — eating less meat?"
+      ],
+      [
+       "B",
+       "[[I see what you mean, but]] that could be quite hard for some people. It's a big change to their diet."
+      ]
+     ],
+     "a2": [
+      [
+       "A",
+       "[[So, which one shall we choose]]? I'd say saving energy at home is the easiest."
+      ],
+      [
+       "B",
+       "[[I couldn't agree more]]. You don't have to spend any money, and it only takes a second to switch off a light."
+      ],
+      [
+       "A",
+       "Recycling is quite easy too, [[but]] [[it seems we both think]] saving energy is the simplest. [[Shall we go for]] that one?"
+      ],
+      [
+       "B",
+       "Yes, let's go for that."
+      ]
+     ]
+    },
+    {
+     "topic": "Работа",
+     "q": "Here are some things people think about when they are choosing a job. Talk to each other about why these things might be important when choosing a job.",
+     "c": "Why might these things be important when choosing a job?",
+     "prompts": [
+      "the salary",
+      "the people you work with",
+      "the chance to travel",
+      "how far it is from home",
+      "doing something you enjoy"
+     ],
+     "q2": "Which do you think is the most important thing to consider?",
+     "a": [
+      [
+       "A",
+       "[[Shall we start with]] the salary? [[For most people]], that's the first thing they look at."
+      ],
+      [
+       "B",
+       "[[That's true to some extent, but]] money isn't everything. If you hate your job, a good salary won't make you happy."
+      ],
+      [
+       "A",
+       "[[I see what you mean]]. So doing something you enjoy is more important, [[would you agree]]?"
+      ],
+      [
+       "B",
+       "Absolutely. You spend about forty hours a week at work, so you need to like what you do. [[What about]] the people you work with?"
+      ],
+      [
+       "A",
+       "[[I'd say]] that's really important too. Friendly colleagues can make even a boring job bearable."
+      ],
+      [
+       "B",
+       "[[Good point]]. [[Shall we move on to]] how far it is from home? A long journey every day can be exhausting."
+      ],
+      [
+       "A",
+       "[[Definitely]]. And the chance to travel — [[I think]] it's exciting when you're young, [[but]] maybe not when you have a family."
+      ],
+      [
+       "B",
+       "[[That's a good point]]. It depends on your age and your situation."
+      ]
+     ],
+     "a2": [
+      [
+       "A",
+       "So, which one is the most important? [[If you ask me]], it's doing something you enjoy."
+      ],
+      [
+       "B",
+       "[[I'm not so sure about that]]. I think the salary matters more, because you need to pay the bills."
+      ],
+      [
+       "A",
+       "[[I take your point, but]] if you love your job, you'll work harder and probably earn more in the end."
+      ],
+      [
+       "B",
+       "Well, [[let's agree to disagree]]!"
+      ]
+     ]
+    },
+    {
+     "topic": "Новости",
+     "q": "Here are some ways that people get news. Talk to each other about the advantages and disadvantages of getting news in these ways.",
+     "c": "What are the advantages and disadvantages of getting news in these ways?",
+     "prompts": [
+      "social media",
+      "TV",
+      "newspapers",
+      "radio",
+      "friends and family"
+     ],
+     "q2": "Which way of getting news do you think is the most reliable?",
+     "a": [
+      [
+       "A",
+       "[[Shall I go first?]] Social media is probably how most young people get news nowadays."
+      ],
+      [
+       "B",
+       "[[That's true]]. It's quick and free, [[but]] the problem is that lots of stories aren't true."
+      ],
+      [
+       "A",
+       "[[Exactly!]] Anyone can post anything. [[How do you feel about]] TV news?"
+      ],
+      [
+       "B",
+       "[[I'd say]] it's more reliable, [[because]] journalists check the facts. [[On the other hand]], you have to watch it at a certain time."
+      ],
+      [
+       "A",
+       "[[That's a good point]], although most channels have websites now. [[What about]] the radio? My dad listens to the news in the car every morning."
+      ],
+      [
+       "B",
+       "It's convenient when you're driving, [[but]] I hardly ever listen to it. Newspapers are similar — they're quite expensive, and the news is often a day old."
+      ],
+      [
+       "A",
+       "[[I see what you mean]]. [[Shall we move on to]] friends and family? Sometimes my parents tell me about things before I see them online."
+      ],
+      [
+       "B",
+       "Same here! [[But]] they sometimes get the details wrong, so you need to check."
+      ]
+     ],
+     "a2": [
+      [
+       "A",
+       "[[So, which one shall we choose]]? I'd go for TV news."
+      ],
+      [
+       "B",
+       "[[I couldn't agree more]]. Newspapers are reliable too, [[but]] fewer people read them now."
+      ],
+      [
+       "A",
+       "[[It seems we both think]] TV is the best option, then."
+      ],
+      [
+       "B",
+       "Yes, let's go for TV."
+      ]
+     ]
+    },
+    {
+     "topic": "Семья",
+     "q": "Here are some activities that families can do together. Talk to each other about why these activities might be good for families.",
+     "c": "Why might these activities be good for families?",
+     "prompts": [
+      "eating meals together",
+      "going on holiday",
+      "playing board games",
+      "doing sport",
+      "watching films"
+     ],
+     "q2": "Which activity do you think brings families closest together?",
+     "a": [
+      [
+       "A",
+       "[[Shall we start with]] eating meals together? [[I firmly believe that]] it's really important."
+      ],
+      [
+       "B",
+       "[[I couldn't agree more]]. It's often the only time everyone is in the same room and can talk about their day."
+      ],
+      [
+       "A",
+       "[[Exactly!]] [[What about]] going on holiday? You spend a lot of time together, [[but]] it can also lead to arguments!"
+      ],
+      [
+       "B",
+       "[[That's true]], [[but]] you make memories that last for years. [[How do you feel about]] playing board games?"
+      ],
+      [
+       "A",
+       "[[To be honest]], I think they're great, especially for families with small children. Everyone can join in."
+      ],
+      [
+       "B",
+       "[[I see what you mean, but]] teenagers might find them a bit boring. [[Shall we move on to]] doing sport?"
+      ],
+      [
+       "A",
+       "Sport is good [[because]] it's healthy and fun at the same time. And what about watching films?"
+      ],
+      [
+       "B",
+       "It's relaxing, [[but]] you don't really talk to each other while you're watching, [[would you agree]]?"
+      ]
+     ],
+     "a2": [
+      [
+       "A",
+       "So, which one brings families closest together? [[I'd say]] eating meals together."
+      ],
+      [
+       "B",
+       "[[I'm not so sure about that]]. I think going on holiday is better, because you spend whole days together."
+      ],
+      [
+       "A",
+       "[[I take your point]], [[but]] holidays only happen once or twice a year, and meals happen every day."
+      ],
+      [
+       "B",
+       "[[That's a good point]]. OK, [[shall we go for]] eating meals together?"
+      ]
+     ]
     }
    ]
   },
@@ -1032,6 +1482,66 @@
      "topic": "Путешествия",
      "q": "Is it important for young people to travel to other countries?",
      "a": "Yes, [[I'd say]] it's really valuable. [[That's because]] travelling helps you understand other cultures and become more independent. [[For example]], when I went abroad for the first time, I had to speak English in real situations, which boosted my confidence. [[However]], [[it depends on]] money — not everyone can afford it."
+    },
+    {
+     "topic": "Окружающая среда",
+     "q": "Do you think individuals can really make a difference to the environment, or is it the government's job?",
+     "a": "[[I'd say]] it's a bit of both. [[On the one hand]], one person recycling won't save the planet. [[On the other hand]], if millions of people change their habits, it makes a real difference. [[What's more]], governments usually only act when people show they care. [[So, all in all]], I think we all have a part to play."
+    },
+    {
+     "topic": "Окружающая среда",
+     "q": "Should cars be banned from city centres?",
+     "a": "[[That's a tricky one]]. [[I can see the advantages]] — there would be less pollution and noise, and the streets would be safer. [[Having said that]], it might be difficult for elderly people or people with disabilities. [[If you ask me]], cities should improve public transport first, and only then start limiting cars."
+    },
+    {
+     "topic": "Работа",
+     "q": "Is it better to work for a big company or a small one?",
+     "a": "[[It depends on]] what you want. Big companies usually pay more and offer more chances to get promoted. [[However]], in a small company you know everyone, and [[I'd imagine]] your work gets noticed more. [[Personally]], I'd prefer a small company, [[because]] I like a friendly atmosphere."
+    },
+    {
+     "topic": "Работа",
+     "q": "Do you think more people will work from home in the future?",
+     "a": "Yes, [[I'm pretty sure]] they will. [[The main reason is that]] technology makes it so easy — you only need a laptop and a good internet connection. [[That said]], I don't think offices will disappear completely, [[because]] people need to meet face to face sometimes. [[I'd say]] most people will do a mix of both."
+    },
+    {
+     "topic": "Работа",
+     "q": "Should young people get a part-time job while they are still at school?",
+     "a": "[[I firmly believe that]] it's a good idea, [[as long as]] it doesn't affect their studies. [[For one thing]], they learn how to manage money. [[For another]], they get useful experience for their CV. [[However]], school should always come first, so I'd say no more than a few hours a week."
+    },
+    {
+     "topic": "Новости",
+     "q": "How can people tell if a news story is true?",
+     "a": "[[That's a good question]]. [[I'd say]] the best way is to check whether the same story appears on several reliable websites. [[It's also worth]] looking at who wrote it and when. [[To be honest]], I think schools should teach students how to do this, [[because]] there's so much fake news online."
+    },
+    {
+     "topic": "Новости",
+     "q": "Do young people pay enough attention to the news?",
+     "a": "[[Not really, in my opinion]]. Most young people only see the news when it pops up on social media. [[Having said that]], they care a lot about some topics, like the environment. [[If you ask me]], the news should be presented in a more interesting way for teenagers — [[for example]], through short videos."
+    },
+    {
+     "topic": "Семья",
+     "q": "Do families spend less time together than they did in the past?",
+     "a": "[[I'm afraid]] they probably do. [[These days]] parents work long hours, and children have lots of after-school activities. [[On top of that]], everyone spends so much time on their phones, even at home. [[Having said that]], I know lots of families who still make time for each other at weekends."
+    },
+    {
+     "topic": "Семья",
+     "q": "What can grandparents teach young people?",
+     "a": "[[Quite a lot, actually]]. They've got so much life experience, so they can give good advice. [[For example]], my grandmother taught me how to cook and how to look after plants. [[What's more]], they can tell us how life used to be, [[which helps us understand]] our own history."
+    },
+    {
+     "topic": "Покупки",
+     "q": "Do you think people buy too many things nowadays?",
+     "a": "Yes, [[I'm afraid]] I do. Shopping has become so easy — you can order something on your phone in seconds. [[As a result]], people buy things they don't really need. [[For example]], lots of my friends buy new clothes every month. [[If you ask me]], we should think twice before buying something new."
+    },
+    {
+     "topic": "Спорт",
+     "q": "Do professional sportspeople deserve to earn so much money?",
+     "a": "[[That's a tricky one]]. [[On the one hand]], they train extremely hard, and their careers are very short. [[On the other hand]], it doesn't seem fair that a footballer earns more than a doctor or a nurse. [[Personally]], [[I'd say]] they deserve to be well paid, [[but]] not as much as they are now."
+    },
+    {
+     "topic": "Путешествия",
+     "q": "Does tourism have more advantages or disadvantages for a place?",
+     "a": "[[I'd say]] it has more advantages, [[as long as]] it's well managed. Tourists bring money and create jobs, which is really important for small towns. [[However]], if there are too many tourists, prices go up and local people may have to move out. [[So]] it's all about finding the right balance."
     }
    ]
   }

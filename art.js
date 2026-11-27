@@ -8,13 +8,16 @@ window.SPEAK_ART = (() => {
   function person(x, y, o = {}) {
     const s = o.s || 1, skin = o.skin || SK[0], hair = o.hair || '#3b2a20', top = o.top || '#5b7cfa', bot = o.bottom || '#33405c';
     const pose = o.pose || 'stand', arms = o.arms || 'down', hs = o.hs || 'short';
-    const sit = pose !== 'stand';
+    const sit = pose === 'sit' || pose === 'chair';
     const bodyTop = sit ? -60 : -74, bodyBot = sit ? -22 : -36, headY = bodyTop - 13;
     let g = '';
     // legs
     if (pose === 'stand') {
       g += `<rect x="-9" y="-38" width="7.5" height="36" rx="3" fill="${bot}"/><rect x="1.5" y="-38" width="7.5" height="36" rx="3" fill="${bot}"/>`;
       g += `<ellipse cx="-6" cy="-1" rx="6" ry="3" fill="${INK}"/><ellipse cx="6" cy="-1" rx="6" ry="3" fill="${INK}"/>`;
+    } else if (pose === 'run') {
+      g += `<path d="M-3 -38 L-14 -20 L-26 -12" stroke="${bot}" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M3 -38 L12 -18 L8 -2" stroke="${bot}" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
+      g += `<ellipse cx="-28" cy="-10" rx="6" ry="3" fill="${INK}" transform="rotate(-30 -28 -10)"/><ellipse cx="12" cy="-1" rx="6" ry="3" fill="${INK}"/>`;
     } else if (pose === 'sit') {
       g += `<ellipse cx="0" cy="-12" rx="22" ry="10" fill="${bot}"/>`;
     }
@@ -32,7 +35,10 @@ window.SPEAK_ART = (() => {
       pointL: [[-11, sy, -34, sy - 10], [11, sy, 17, bodyBot - 4]],
       hold: [[-11, sy, -7, sy + 16], [11, sy, 7, sy + 16]],
       type: [[-11, sy, -10, sy + 26], [11, sy, 10, sy + 26]],
-      cheers: [[-11, sy, -17, bodyBot - 4], [11, sy, 16, sy - 16]]
+      cheers: [[-11, sy, -17, bodyBot - 4], [11, sy, 16, sy - 16]],
+      run: [[-11, sy, -22, sy + 18], [11, sy, 22, sy + 4]],
+      ride: [[-11, sy, 22, sy + 16], [11, sy, 28, sy + 14]],
+      bags: [[-11, sy, -19, bodyBot + 2], [11, sy, 19, bodyBot + 2]]
     }[arms];
     for (const [a, b, c, d] of A) g += `<path d="M${a} ${b} L${c} ${d}" stroke="${top}" stroke-width="7.5" stroke-linecap="round" fill="none"/><circle cx="${c}" cy="${d}" r="3.6" fill="${skin}"/>`;
     // neck + head
@@ -152,6 +158,89 @@ window.SPEAK_ART = (() => {
     <g fill="#e85d4a"><circle cx="76" cy="147" r="4"/><circle cx="244" cy="147" r="4" fill="#8fd16a"/></g>
     <g transform="translate(160 150)"><rect x="-22" y="-20" width="44" height="20" rx="4" fill="#f6c1d6"/><rect x="-22" y="-12" width="44" height="4" fill="#fff"/><rect x="-1.5" y="-30" width="3" height="10" fill="#8fe0ff"/><path d="M0-36q4 4 0 6q-4-2 0-6z" fill="#ffcf6b"/></g>
     <g fill="#bfe9fa" opacity=".9"><path d="M110 150v-14h8v14z"/><path d="M204 150v-14h8v14z"/></g>`);
+
+  // shopping bag hanging from a hand at (x, y)
+  const bag = (x, y, c) => `<path d="M${x - 5} ${y + 4} q5 -9 10 0" stroke="${INK}" stroke-width="1.6" fill="none"/><rect x="${x - 9}" y="${y + 3}" width="18" height="22" rx="2" fill="${c}"/>`;
+  const car = (x, y, c, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-30 -8 v-10 q0 -4 4 -4 h8 l8 -10 h22 l10 10 h8 q4 0 4 4 v10z" fill="${c}"/><path d="M-14 -22 l6 -8 h8 v8z M4 -22 v-8 h8 l7 8z" fill="#cfeaf7"/><circle cx="-18" cy="-6" r="6" fill="${INK}"/><circle cx="18" cy="-6" r="6" fill="${INK}"/></g>`;
+
+  S.football = svg('Футбольный матч: игрок радуется забитому голу', `
+    <rect width="320" height="220" fill="#cfeaf7"/>${cloud(70, 22, .8)}
+    <rect y="34" width="320" height="58" fill="#8aa1b8"/>
+    <g>${Array.from({ length: 3 }, (_, r) => Array.from({ length: 27 }, (_, i) => `<circle cx="${6 + i * 12 + (r % 2) * 6}" cy="${46 + r * 14}" r="4.2" fill="${['#e85d4a', '#3f6fd8', '#f0a83a', '#fff', '#43a68a'][(i * 3 + r) % 5]}"/>`).join('')).join('')}</g>
+    <rect y="88" width="320" height="132" fill="#6fae6a"/><g fill="#66a362"><rect x="0" y="88" width="40" height="132"/><rect x="80" y="88" width="40" height="132"/><rect x="160" y="88" width="40" height="132"/><rect x="240" y="88" width="40" height="132"/></g>
+    <path d="M320 112 H226 V200 H320" stroke="#fff" stroke-width="3" fill="none" opacity=".85"/>
+    <g transform="translate(250 104)"><g stroke="#d8dde6" stroke-width="1"><path d="M8 4h48M8 16h48M8 28h48M8 40h48M8 52h48M14 0v62M26 0v62M38 0v62M50 0v62"/></g><path d="M0 64 V0 H62 V64" stroke="#fff" stroke-width="5" fill="none" stroke-linejoin="round"/></g>
+    <g transform="translate(290 150)"><circle r="7" fill="#fff" stroke="${INK}" stroke-width="1.2"/><path d="M0 -3 l3 2 -1 3.4h-4l-1 -3.4z" fill="${INK}"/></g>
+    ${person(266, 170, { skin: SK[0], hair: '#7a4a2c', top: '#f0d23a', bottom: INK, arms: 'down', s: .78 })}
+    ${person(206, 190, { skin: SK[2], hair: '#2a1d16', top: '#3f6fd8', bottom: '#fff', arms: 'down', s: .88 })}
+    ${person(72, 204, { pose: 'run', skin: SK[1], hair: '#5a3a28', top: '#e85d4a', bottom: '#fff', arms: 'run', s: .92 })}
+    ${person(140, 208, { skin: SK[3], hair: '#2a1d16', top: '#e85d4a', bottom: '#fff', arms: 'up', s: 1.08 })}`);
+
+  S.running = svg('Девушка одна бегает в парке', `
+    <rect width="320" height="220" fill="#d6effa"/><circle cx="262" cy="38" r="17" fill="#ffd45a"/>${cloud(80, 30)}${cloud(190, 50, .7)}
+    <path d="M-10 150 Q80 110 170 140 T330 120 V220 H-10Z" fill="#8cc27f"/><path d="M-10 172 Q110 150 200 170 T330 160 V220 H-10Z" fill="#6fae6a"/>
+    ${tree(36, 160, .9)}${tree(286, 150, 1.05)}${tree(228, 128, .55)}
+    <path d="M-10 214 Q120 178 200 190 T330 176" stroke="#e3d2a8" stroke-width="22" fill="none" stroke-linecap="round"/>
+    <g transform="translate(96 156)"><rect x="-26" y="-14" width="52" height="5" rx="2" fill="#8a5a3b"/><rect x="-26" y="-6" width="52" height="5" rx="2" fill="#8a5a3b"/><rect x="-22" y="-1" width="4" height="12" fill="#5d4030"/><rect x="18" y="-1" width="4" height="12" fill="#5d4030"/></g>
+    ${person(166, 200, { pose: 'run', skin: SK[0], hair: '#5a3a28', top: '#c2456b', bottom: '#33405c', arms: 'run', hs: 'long', phones: true, s: 1.12 })}`);
+
+  S.cycling = svg('Молодой человек едет на велосипеде по велодорожке в городе', `
+    <rect width="320" height="220" fill="#cfeaf7"/>${cloud(250, 24, .8)}
+    <g><rect x="0" y="34" width="70" height="110" fill="#e7b38a"/><rect x="70" y="58" width="60" height="86" fill="#9fb7d9"/><rect x="130" y="24" width="74" height="120" fill="#d8a7c4"/><rect x="204" y="50" width="56" height="94" fill="#b7d6a0"/><rect x="260" y="38" width="60" height="106" fill="#e9d38f"/></g>
+    <g fill="#fff" opacity=".75">${[[10, 46], [40, 46], [10, 76], [40, 76], [10, 106], [40, 106], [82, 70], [106, 70], [82, 100], [106, 100], [142, 36], [172, 36], [142, 66], [172, 66], [142, 96], [172, 96], [216, 62], [238, 62], [216, 92], [238, 92], [272, 50], [298, 50], [272, 80], [298, 80], [272, 110], [298, 110]].map(([x, y]) => `<rect x="${x}" y="${y}" width="14" height="18" rx="2"/>`).join('')}</g>
+    <rect y="144" width="320" height="34" fill="#7d8597"/><g fill="#e9edf3"><rect x="10" y="159" width="26" height="4"/><rect x="70" y="159" width="26" height="4"/><rect x="130" y="159" width="26" height="4"/><rect x="190" y="159" width="26" height="4"/><rect x="250" y="159" width="26" height="4"/></g>
+    ${car(40, 176, '#e85d4a', .8)}${car(110, 176, '#3f6fd8', .8)}${car(270, 176, '#f0a83a', .8)}
+    <rect y="178" width="320" height="6" fill="#e9edf3"/><rect y="184" width="320" height="36" fill="#5fb07a"/>
+    <g fill="#e9fbe9" opacity=".8" transform="translate(262 204)"><circle cx="-10" cy="0" r="6" fill="none" stroke="#e9fbe9" stroke-width="2"/><circle cx="10" cy="0" r="6" fill="none" stroke="#e9fbe9" stroke-width="2"/><path d="M-10 0 L-2 0 L4 -8 L-6 -8Z M4 -8 L10 0" stroke="#e9fbe9" stroke-width="2" fill="none"/></g>
+    <g stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="118" cy="196" r="20"/><circle cx="196" cy="196" r="20"/><path d="M118 196 L152 196 L142 158 Z M144 166 L180 160 M152 196 L180 160 L196 196 M180 160 L176 144 M170 142 h12"/></g>
+    <ellipse cx="141" cy="155" rx="9" ry="3.5" fill="${INK}"/>
+    <path d="M142 150 L166 156 L158 196" stroke="#33405c" stroke-width="7.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="160" cy="197" rx="6" ry="3" fill="${INK}"/>
+    ${person(142, 172, { pose: 'chair', skin: SK[1], hair: '#2a1d16', top: '#43a68a', arms: 'ride', hs: 'cap', cap: '#e85d4a' })}`);
+
+  S.bus = svg('Пассажиры стоят в переполненном автобусе', `
+    <rect width="320" height="220" fill="#e9edf3"/>
+    <rect x="0" y="34" width="320" height="76" fill="#bfe3f5"/><g fill="#9fb7d9"><rect x="10" y="70" width="40" height="40"/><rect x="58" y="56" width="30" height="54"/><rect x="150" y="62" width="44" height="48"/><rect x="236" y="50" width="34" height="60"/><rect x="280" y="74" width="40" height="36"/></g>
+    <g fill="#c9cfdb"><rect x="0" y="30" width="320" height="6"/><rect x="0" y="108" width="320" height="8"/><rect x="100" y="30" width="8" height="86"/><rect x="210" y="30" width="8" height="86"/></g>
+    <rect x="0" y="14" width="320" height="5" rx="2" fill="#8a93a6"/>
+    <g stroke="#8a93a6" stroke-width="2" fill="none">${[70, 128, 186, 244, 302].map(x => `<path d="M${x} 18 v52"/><circle cx="${x}" cy="76" r="6"/>`).join('')}</g>
+    <rect x="18" y="14" width="6" height="206" fill="#f0c43a"/><rect x="292" y="14" width="6" height="206" fill="#f0c43a"/>
+    <rect y="196" width="320" height="24" fill="#9aa1ad"/>
+    ${person(76, 198, { skin: SK[4], hair: '#5a3a28', top: '#e9a0b8', bottom: '#33405c', hs: 'bun', s: .9 })}${person(192, 198, { skin: SK[1], hair: '#2a1d16', top: '#9fb7d9', bottom: '#4b3f6b', s: .9 })}${person(250, 198, { skin: SK[0], hair: '#e0b04a', top: '#d9c49a', bottom: '#33405c', hs: 'long', s: .88 })}
+    ${person(46, 206, { skin: SK[0], hair: '#e0b04a', top: '#7c5cd6', bottom: '#33405c', arms: 'wave', hs: 'long', s: 1.02 })}
+    ${person(104, 210, { skin: SK[2], hair: '#2a1d16', top: '#3f6fd8', bottom: '#4b3f6b', arms: 'wave', glasses: true, s: 1.06 })}
+    ${person(162, 208, { skin: SK[1], hair: '#5a3a28', top: '#e85d4a', bottom: '#33405c', arms: 'wave', phones: true, s: 1.04 })}
+    ${person(220, 210, { skin: SK[3], hair: '#2a1d16', top: '#43a68a', bottom: '#33405c', arms: 'wave', hs: 'bun', s: 1.06 })}
+    ${person(278, 208, { skin: SK[4], hair: '#7a4a2c', top: '#f0a83a', bottom: '#4b3f6b', arms: 'hold', s: 1.02 })}
+    <rect x="274" y="146" width="9" height="14" rx="2" fill="${INK}"/>`);
+
+  S.market = svg('Женщина покупает фрукты на уличном рынке', `
+    <rect width="320" height="220" fill="#d6effa"/>${cloud(60, 20, .7)}
+    <g><rect x="0" y="40" width="80" height="120" fill="#e7b38a"/><rect x="250" y="30" width="70" height="130" fill="#d8a7c4"/></g>
+    <rect y="160" width="320" height="60" fill="#d9cdb8"/>
+    <rect x="96" y="40" width="6" height="140" fill="#8a5a3b"/><rect x="284" y="40" width="6" height="140" fill="#8a5a3b"/>
+    ${person(192, 164, { skin: SK[2], hair: '#2a1d16', top: '#43a68a', bottom: '#33405c', arms: 'down', hs: 'cap', cap: '#f0a83a', s: .95 })}
+    <g>${Array.from({ length: 8 }, (_, i) => `<path d="M${90 + i * 26} 30 h26 v22 q-13 10 -26 0z" fill="${i % 2 ? '#fff' : '#e85d4a'}"/>`).join('')}</g>
+    <rect x="96" y="126" width="194" height="58" rx="3" fill="#b07a4f"/><rect x="96" y="126" width="194" height="6" fill="#8a5a3b"/>
+    <g>${[[120, '#f08a2c'], [160, '#e04a3a'], [200, '#8fd16a'], [240, '#ffd45a'], [270, '#7c5cd6']].map(([x, c]) => `<rect x="${x - 17}" y="112" width="34" height="16" rx="2" fill="#d7a874"/>` + [[-9, 108], [0, 106], [9, 108], [-4, 101], [5, 101]].map(([dx, y]) => `<circle cx="${x + dx}" cy="${y}" r="5.5" fill="${c}"/>`).join('')).join('')}</g>
+    <g fill="#fff">${[120, 160, 200, 240].map(x => `<rect x="${x - 7}" y="132" width="14" height="9" rx="1.5"/>`).join('')}</g>
+    ${person(56, 210, { skin: SK[0], hair: '#7a4a2c', top: '#3f6fd8', bottom: '#4b3f6b', arms: 'point', hs: 'long', s: 1.1 })}
+    ${bag(37, 166, '#f6d7bd')}`);
+
+  S.mall = svg('Две подруги с покупками в торговом центре', `
+    <rect width="320" height="220" fill="#eef0f6"/>
+    <rect y="0" width="320" height="70" fill="#dfe3ee"/>
+    <g><rect x="16" y="10" width="86" height="46" rx="3" fill="#c7e7f5"/><rect x="118" y="10" width="86" height="46" rx="3" fill="#f6d7e6"/><rect x="220" y="10" width="86" height="46" rx="3" fill="#dff1d8"/></g>
+    ${person(150, 62, { skin: SK[1], hair: '#2a1d16', top: '#7c5cd6', bottom: '#33405c', s: .45 })}${person(250, 62, { skin: SK[0], hair: '#e0b04a', top: '#43a68a', bottom: '#33405c', hs: 'long', s: .45 })}
+    <rect y="62" width="320" height="10" fill="#b7bdcc"/><g stroke="#9aa1b4" stroke-width="2"><path d="M0 52 H320"/>${Array.from({ length: 17 }, (_, i) => `<path d="M${i * 20} 52 v10"/>`).join('')}</g>
+    <g><rect x="10" y="84" width="130" height="86" rx="3" fill="#c7e7f5"/><rect x="10" y="78" width="130" height="14" rx="3" fill="#e85d4a"/><rect x="180" y="84" width="130" height="86" rx="3" fill="#f6d7e6"/><rect x="180" y="78" width="130" height="14" rx="3" fill="#3f6fd8"/></g>
+    <g fill="#fff" opacity=".85"><rect x="30" y="82" width="50" height="6" rx="3"/><rect x="200" y="82" width="60" height="6" rx="3"/></g>
+    <g><path d="M40 168 v-46 q0 -8 10 -8 q10 0 10 8 v46z" fill="#f0a83a"/><path d="M90 168 v-46 q0 -8 10 -8 q10 0 10 8 v46z" fill="#43a68a"/><path d="M214 168 v-46 q0 -8 10 -8 q10 0 10 8 v46z" fill="#7c5cd6"/><path d="M264 168 v-46 q0 -8 10 -8 q10 0 10 8 v46z" fill="#e85d4a"/></g>
+    <rect y="170" width="320" height="50" fill="#d4d8e3"/><g stroke="#c3c8d6" stroke-width="2"><path d="M0 194 H320M60 170 L40 220M140 170 L130 220M220 170 L230 220M290 170 L310 220"/></g>
+    <g transform="translate(160 176)"><path d="M-12 0 l4 -22 h16 l4 22z" fill="#b07a4f"/><circle cx="0" cy="-34" r="16" fill="#5aab61"/><circle cx="-10" cy="-26" r="10" fill="#4f9a56"/><circle cx="10" cy="-28" r="11" fill="#468c4d"/></g>
+    ${person(116, 208, { skin: SK[0], hair: '#e0b04a', top: '#c2456b', bottom: '#33405c', arms: 'bags', hs: 'long', s: 1.08 })}
+    ${bag(96, 171, '#f0a83a')}${bag(137, 171, '#fff')}
+    ${person(206, 210, { skin: SK[2], hair: '#2a1d16', top: '#f0a83a', bottom: '#4b3f6b', arms: 'bags', hs: 'bun', s: 1.08 })}
+    ${bag(186, 173, '#7c5cd6')}${bag(227, 173, '#43a68a')}`);
 
   return S;
 })();
