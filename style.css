@@ -756,3 +756,19 @@ ul.ls.bad li::marker{color:var(--bad)}
 .card.ttl{display:flex;flex-direction:column;gap:6px;border-left:6px solid var(--c-writing)}
 .card.ttl .ttl-b{font-weight:800;color:var(--c-writing)}
 .card.ttl p{margin:0}
+
+/* ---------- reading: shuffle block ---------- */
+.shuffle{display:flex;flex-direction:column;gap:14px;border-top:4px solid var(--c-reading)}
+.shuffle-h{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.shuffle-h h3{display:flex;align-items:center;gap:8px}
+.shuffle-h h3 svg{width:20px;height:20px;color:var(--gold-deep)}
+.shuffle-h p{margin:4px 0 0}
+.shuffle-parts{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.sp-part{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;box-shadow:0 3px 0 var(--line);transition:transform .08s,box-shadow .08s,border-color .15s}
+.sp-part:hover{border-color:var(--c-reading);color:var(--ink)}
+.sp-part:active{transform:translateY(3px);box-shadow:0 0 0 var(--line)}
+.sp-part b{font-size:15px}
+.sp-part span{font-size:12px;color:var(--soft);line-height:1.3}
+.sp-part small{font-size:11px;font-weight:700;color:var(--c-reading);margin-top:auto;padding-top:4px}
+@media (max-width:1100px){.shuffle-parts{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:600px){.shuffle-parts{grid-template-columns:repeat(2,minmax(0,1fr))}.shuffle-h .btn{width:100%}}

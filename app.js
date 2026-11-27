@@ -244,10 +244,12 @@ function checkBadges(silent) {
 
 /* ========== data ========== */
 let W = null, R = null, WR = null, SP = null, RS = [], RV = 1;
-const READING_FILES = ['reading', 'reading-2', 'reading-3', 'reading-4', 'reading-5'];
+const READING_FILES = ['reading', 'reading-2', 'reading-3', 'reading-4', 'reading-5', 'reading-6', 'reading-7', 'reading-8', 'reading-9', 'reading-10'];
 async function loadData() {
   const get = u => fetch(u).then(r => { if (!r.ok) throw new Error(u); return r.json(); });
-  [W, WR, SP, ...RS] = await Promise.all([get('data/words.json'), get('data/writing.json'), get('data/speaking.json'), ...READING_FILES.map(f => get('data/' + f + '.json'))]);
+  [W, WR, SP, ...RS] = await Promise.all([get('data/words.json'), get('data/writing.json'), get('data/speaking.json'), ...READING_FILES.map(f => get('data/' + f + '.json').catch(() => null))]);
+  // variants are numbered by position, so stop at the first missing file (a gap would shift the numbers)
+  const gap = RS.indexOf(null); if (gap >= 0) RS = RS.slice(0, gap);
   R = RS[0];
   W.byId = {}; for (const w of W.words) W.byId[w.id] = w;
 }
@@ -281,7 +283,7 @@ function renderNav(h) {
     ['s', 'Прогресс'], ['a', 'Пробный экзамен', 'mock', Store.data.reading.mock && Store.data.reading.mock.stage !== 'done' ? '…' : '', 'flag', '--accent'], ['a', 'Мои ошибки', 'mistakes', W && RS.length ? String(mistDue() || '') : '', 'x', '--bad'], ['a', 'Достижения', 'badges', got + '/' + BADGES.length, 'medal', '--gold-deep']
   ];
   $('#nav').innerHTML = items.map(it => it[0] === 's' ? '<div class="nav-h">' + esc(it[1]) + '</div>'
-    : '<a href="#' + it[2] + '" class="' + ((h === it[2] || (it[2] === 'write' && h.startsWith('write-')) || (it[2] === 'writing' && h.startsWith('fmt-')) || (it[2] === 'speaking' && h.startsWith('speak-') && h !== 'speak-fav') || (it[2] === 'mock' && h.startsWith('mock-')) || (it[2] === 'mistakes' && h === 'mistakes-r') || (it[2] === 'reading' && (h.startsWith('part-') || h === 'full-test' || /^(reading-|v\d-)/.test(h)))) ? 'on' : '') + '"><span class="ni" style="--c:var(' + it[5] + ')">' + ICON[it[4]] + '</span><span class="lb">' + esc(it[1]) + '</span>' + (it[3] ? '<span class="cnt">' + esc(it[3]) + '</span>' : '') + '</a>').join('');
+    : '<a href="#' + it[2] + '" class="' + ((h === it[2] || (it[2] === 'write' && h.startsWith('write-')) || (it[2] === 'writing' && h.startsWith('fmt-')) || (it[2] === 'speaking' && h.startsWith('speak-') && h !== 'speak-fav') || (it[2] === 'mock' && h.startsWith('mock-')) || (it[2] === 'mistakes' && h === 'mistakes-r') || (it[2] === 'reading' && (h.startsWith('part-') || h === 'full-test' || /^(reading-|v\d+-|mix|rand-)/.test(h)))) ? 'on' : '') + '"><span class="ni" style="--c:var(' + it[5] + ')">' + ICON[it[4]] + '</span><span class="lb">' + esc(it[1]) + '</span>' + (it[3] ? '<span class="cnt">' + esc(it[3]) + '</span>' : '') + '</a>').join('');
   renderHud();
 }
 
@@ -294,16 +296,20 @@ function route() {
   $('#side').classList.remove('open');
   renderNav(h);
   if (!W) { view.innerHTML = '<div class="page"><div class="empty">Загрузка…</div></div>'; return; }
+  const entered = route.prev !== h; route.prev = h; // false when the same page is re-rendered (e.g. after a sync)
   if (h === 'home') return Home();
   if (h === 'words' || h === 'words-up') return Words('up');
   if (h === 'words-nb') return Words('nb');
   if (h === 'words-b2') return Words('b2');
   if (h === 'reading') return ReadingList();
+  if (h === 'mix-new') { setV(1); MIXV = [1, 2, 3, 4, 5, 6, 7].map(pickV); E = null; history.replaceState(null, '', '#mix'); return Exam('mix', [1, 2, 3, 4, 5, 6, 7]); }
+  if (h === 'mix') { const run = Store.data.reading.run; if (!run || run.mode !== 'mix' || !run.mix || run.mix.some(v => !RS[v - 1])) { location.replace('#mix-new'); return; } setV(1); MIXV = run.mix.slice(); return Exam('mix', [1, 2, 3, 4, 5, 6, 7]); }
+  if (/^rand-[1-7]$/.test(h)) { const n = +h.slice(5); location.replace('#' + rhash(n, pickV(n))); return; }
   let rm;
-  if ((rm = /^reading-(\d)$/.exec(h)) && RS[rm[1] - 1]) { setV(+rm[1]); return ReadingHub(); }
+  if ((rm = /^reading-(\d+)$/.exec(h)) && RS[rm[1] - 1]) { setV(+rm[1]); return ReadingHub(); }
   if (/^part-[1-7]$/.test(h)) { setV(1); return Exam('part', [+h.slice(5)]); }
-  if ((rm = /^v(\d)-part-([1-7])$/.exec(h)) && RS[rm[1] - 1]) { setV(+rm[1]); return Exam('part', [+rm[2]]); }
-  if ((rm = /^v(\d)-full$/.exec(h)) && RS[rm[1] - 1]) { setV(+rm[1]); return Exam('full', [1, 2, 3, 4, 5, 6, 7]); }
+  if ((rm = /^v(\d+)-part-([1-7])$/.exec(h)) && RS[rm[1] - 1]) { setV(+rm[1]); return Exam('part', [+rm[2]]); }
+  if ((rm = /^v(\d+)-full$/.exec(h)) && RS[rm[1] - 1]) { setV(+rm[1]); return Exam('full', [1, 2, 3, 4, 5, 6, 7]); }
   if (h === 'full-test') { setV(1); return Exam('full', [1, 2, 3, 4, 5, 6, 7]); }
   if (h === 'writing') return WritingHub();
   if (h === 'badges') return Badges();
@@ -317,7 +323,7 @@ function route() {
   if (h === 'speak-phrases') return SpeakPhrases();
   if (h === 'speak-fav') return SpeakFav();
   if (/^speak-[1-4]$/.test(h)) return SpeakPart(+h.slice(6));
-  if (/^speak-p[1-4]$/.test(h)) return SpeakPractice(+h.slice(7));
+  if (/^speak-p[1-4]$/.test(h)) return SpeakPractice(+h.slice(7), entered);
   if (h.startsWith('fmt-')) return Sheet(h.slice(4));
   if (h === 'write') return Write(null);
   if (h.startsWith('write-')) return Write(h.slice(6));
@@ -383,7 +389,7 @@ function MistReview() {
   else if (p.kind === 'kwt') body = '<p class="mr-ctx">' + esc(q.first) + '</p><p class="mr-key">' + esc(q.key) + '</p><p class="mr-kwt">' + esc(q.before) + ' ' + input + ' ' + esc(q.after) + '</p><p class="muted small">2–5 слов, включая ' + esc(q.key) + '.</p>';
   else if (p.kind === 'mc-text') body = '<details class="mr-text" open><summary>Отрывок из текста «' + esc(p.title) + '»</summary><p>' + esc(p.paras[q.p]) + '</p></details><p class="mr-stem">' + esc(q.stem) + '</p>' + optBtns(q.opts.map((o, i) => '<b>' + 'ABCD'[i] + '</b> ' + esc(o)), [0, 1, 2, 3]);
   else if (p.kind === 'gapped') { const para = p.paras.find(x => x.includes('[[' + q.n + ']]')); body = '<p class="mr-ctx">' + esc(para).replace(/\[\[(\d+)\]\]/g, (_, k) => +k === q.n ? '<span class="gapb">' + q.n + '</span>' : '…') + '</p><p class="muted small">Какое предложение стоит на месте пропуска?</p>' + optBtns(Object.entries(p.sents).map(([k, t]) => '<b>' + k + '</b> ' + esc(t)), Object.keys(p.sents)); }
-  else if (p.kind === 'matching') body = '<p class="mr-stem">Which person ' + esc(q.stem) + '</p>' + p.texts.map(t => '<details class="mr-text"><summary>' + t.k + ' — ' + esc(t.name) + '</summary><p>' + esc(t.body) + '</p></details>').join('') + optBtns(p.texts.map(t => '<b>' + t.k + '</b> ' + esc(t.name)), p.texts.map(t => t.k));
+  else if (p.kind === 'matching') body = '<p class="mr-stem">' + esc(p.ask || 'Which person mentions') + ' ' + esc(q.stem) + '</p>' + p.texts.map(t => '<details class="mr-text"><summary>' + t.k + ' — ' + esc(t.name) + '</summary><p>' + esc(t.body) + '</p></details>').join('') + optBtns(p.texts.map(t => '<b>' + t.k + '</b> ' + esc(t.name)), p.texts.map(t => t.k));
   const fb = C ? '<div class="mr-fb ' + (isRight(p, q, v) ? 'ok' : 'bad') + '"><b>' + (isRight(p, q, v) ? (it.fixed ? 'Верно! Ошибка исправлена' : 'Верно! Ещё один правильный ответ — и она исправлена') : 'Пока нет. Правильно: ' + esc(answerText(p, q))) + '</b><p>' + q.expl + '</p></div>' : '';
   view.innerHTML = '<div class="page narrow lesson">' +
     '<div class="lesson-top"><a class="x" href="#mistakes" aria-label="К моим ошибкам">' + ICON.x + '</a><div class="bar" style="--c:var(--c-reading)"><i style="width:' + (MR.i / MR.queue.length * 100).toFixed(1) + '%"></i></div></div>' +
@@ -677,19 +683,21 @@ function SpeakFav() {
       : '<div class="empty">Пока пусто. Открой <a href="#speak-phrases">главные фразы</a> или любую часть и нажми ☆ у фраз, которые хочешь выучить.</div>') + '</div>';
   bindStars(SpeakFav);
 }
-const SPK = { n: 0, i: 0, show: false };
-function SpeakPractice(n) {
+const SPK = { n: 0, i: 0, show: false, order: [] };
+// every run goes through the part's questions in a new random order
+const spkStart = n => Object.assign(SPK, { n, i: 0, show: false, order: shuffle(SP.parts[n - 1].questions.map((_, i) => i)) });
+function SpeakPractice(n, fresh) {
   const p = SP.parts[n - 1], qs = p.questions;
-  if (SPK.n !== n) { SPK.n = n; SPK.i = 0; SPK.show = false; }
+  if (fresh || SPK.n !== n || SPK.order.length !== qs.length) spkStart(n);
   setLast('speak-p' + n, 'Speaking · Part ' + n + ' — тренажёр');
   if (SPK.i >= qs.length) {
     view.innerHTML = '<div class="page narrow"><div class="done"><div class="trophy">' + ICON.trophy + '</div><h1>Part ' + n + ' пройдена</h1>' +
       '<p class="muted">Ты ответил на все ' + nQ(qs.length) + '. Вернись через пару дней и попробуй вставить новые фразы из шпаргалки.</p>' +
       '<div class="actions"><button class="btn lg" id="again">Ещё раз</button><a class="btn pri lg" href="#speak-' + n + '">К Part ' + n + '</a></div></div></div>';
-    $('#again').onclick = () => { SPK.i = 0; SPK.show = false; SpeakPractice(n); };
+    $('#again').onclick = () => { spkStart(n); SpeakPractice(n); };
     return;
   }
-  const q = qs[SPK.i], show = SPK.show;
+  const q = qs[SPK.order[SPK.i]], show = SPK.show;
   const art = k => '<figure class="sp-photo">' + ((window.SPEAK_ART || {})[k] || '') + '</figure>';
   const dlg = lines => '<div class="dlg">' + lines.map(([who, t]) => '<div class="say ' + (who === 'A' ? 'a' : 'b') + '"><span class="who">' + who + '</span><p>' + exHTML(t) + '</p></div>').join('') + '</div>';
   let task = '', answer = '';
@@ -1102,8 +1110,19 @@ function Badges() {
 
 /* ========== reading ========== */
 const PTS = { 1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 2, 7: 1 };
-const partOf = n => R.parts[n - 1];
-const setV = v => { RV = v; R = RS[v - 1]; };
+let MIXV = null; // variant number for each part (1..7) in a mixed test
+const partOf = n => (MIXV ? RS[MIXV[n - 1] - 1] : R).parts[n - 1];
+const setV = v => { RV = v; R = RS[v - 1]; MIXV = null; };
+const pv = n => (E && E.mix ? E.mix[n - 1] : RV);
+// pick a variant for part n: unsolved first, otherwise the one solved longest ago
+function pickV(n) {
+  const res = Store.data.reading.results || {}, vs = RS.map((_, i) => i + 1);
+  const fresh = vs.filter(v => !res[rkey(n, v)]);
+  if (fresh.length) return fresh[Math.floor(Math.random() * fresh.length)];
+  const t = v => res[rkey(n, v)].t || 0, min = Math.min(...vs.map(t));
+  const old = vs.filter(v => t(v) - min < DAY);
+  return old[Math.floor(Math.random() * old.length)];
+}
 // results of variant 1 keep their old keys ('1'..'7'), other variants use 'v:n'
 const rkey = (n, v = RV) => v === 1 ? String(n) : v + ':' + n;
 const rhash = (what, v = RV) => what === 'hub' ? 'reading-' + v : what === 'full' ? (v === 1 ? 'full-test' : 'v' + v + '-full') : (v === 1 ? 'part-' + what : 'v' + v + '-part-' + what);
@@ -1114,7 +1133,9 @@ function ReadingList() {
   view.innerHTML = '<div class="page"><div class="head"><div><div class="muted small">Reading &amp; Use of English</div><h1>Варианты</h1></div></div>' +
     '<p class="muted">Каждый вариант — полный экзамен: 7 частей, 52 вопроса. Тексты и задания оригинальные, написаны по формату Cambridge B2 First, к каждому ответу есть объяснение.</p>' +
     '<a class="card tile" href="#mock" style="--c:var(--accent);flex-direction:row;align-items:center;gap:14px"><span class="sp-star" style="background:var(--accent);box-shadow:0 3px 0 var(--accent-deep)">' + ICON.flag + '</span><div style="flex:1"><h3>Пробный экзамен</h3><p class="muted small">Reading & UoE + Writing + Speaking подряд, итог по шкале Cambridge (160 — B2, 180 — C1)</p></div><span class="go" style="margin:0">→</span></a>' +
-    (run && !run.checked && run.mode !== 'mock' && RS[(run.v || 1) - 1] ? '<div class="cont"><div><div class="lbl">Незаконченная попытка</div><div style="font-size:18px;font-weight:600;margin-top:4px">Вариант ' + (run.v || 1) + ' · ' + (run.mode === 'full' ? 'весь вариант' : 'Part ' + run.parts[0]) + ' · отвечено ' + Object.keys(run.ans || {}).length + '</div></div><a class="btn" href="#' + (run.mode === 'full' ? rhash('full', run.v || 1) : rhash(run.parts[0], run.v || 1)) + '">Продолжить →</a></div>' : '') +
+    (run && !run.checked && run.mode !== 'mock' && (run.mode === 'mix' || RS[(run.v || 1) - 1]) ? '<div class="cont"><div><div class="lbl">Незаконченная попытка</div><div style="font-size:18px;font-weight:600;margin-top:4px">' + (run.mode === 'mix' ? 'Случайный вариант' : 'Вариант ' + (run.v || 1) + ' · ' + (run.mode === 'full' ? 'весь вариант' : 'Part ' + run.parts[0])) + ' · отвечено ' + Object.keys(run.ans || {}).length + '</div></div><a class="btn" href="#' + (run.mode === 'mix' ? 'mix' : run.mode === 'full' ? rhash('full', run.v || 1) : rhash(run.parts[0], run.v || 1)) + '">Продолжить →</a></div>' : '') +
+    '<section class="card shuffle"><div class="shuffle-h"><div><h3>' + ICON.bolt + 'Случайная тренировка</h3><p class="muted small">Задания перемешиваются каждый раз. Сначала выпадает то, что ты ещё не решал, потом — то, что решал давно.</p></div><a class="btn pri" href="#mix-new">Случайный вариант · 7 частей</a></div>' +
+    '<div class="shuffle-parts">' + RS[0].parts.map(p => { const left = RS.filter((_, i) => !(Store.data.reading.results || {})[rkey(p.n, i + 1)]).length; return '<a class="sp-part" href="#rand-' + p.n + '"><b>Part ' + p.n + '</b><span>' + esc(p.name) + '</span><small>' + (left ? 'новых: ' + left : 'все решены — повтор') + '</small></a>'; }).join('') + '</div></section>' +
     '<div class="grid2">' + RS.map((r, i) => { const v = i + 1, d = vDone(v); return '<a class="card tile" href="#reading-' + v + '" style="--c:var(--c-reading)"><div class="muted small">' + esc(r.parts.map(p => p.title).filter(Boolean).join(' · ')) + '</div><h3>' + esc(r.title) + '</h3><div class="prog"><div class="bar" style="--c:var(--c-reading)"><i style="width:' + (d / 7 * 100).toFixed(1) + '%"></i></div>' + d + '/7</div><span class="go">' + (d ? (d === 7 ? 'Повторить →' : 'Продолжить →') : 'Начать →') + '</span></a>'; }).join('') + '</div></div>';
   hint('reading');
 }
@@ -1124,7 +1145,7 @@ function ReadingHub() {
   view.innerHTML = '<div class="page"><a class="btn sm ghost" href="#reading" style="align-self:flex-start">' + ICON.back + 'Все варианты</a><div class="head"><div><div class="muted small">Reading &amp; Use of English</div><h1>' + esc(R.title) + '</h1></div></div>' +
     '<div class="cont"><div><div class="lbl">Как на экзамене</div><div style="font-size:19px;font-weight:600;margin-top:4px">Решить весь вариант: 7 частей, 52 вопроса, 75 минут</div><div class="small" style="opacity:.85;margin-top:2px">Между частями переключаешься вверху, проверка — в конце.</div></div><a class="btn" href="#' + rhash('full') + '">Решить всё →</a></div>' +
     '<h2>Или выбери одну часть</h2>' +
-        (run && !run.checked && run.mode !== 'mock' && (run.v || 1) === RV ? '<div class="cont"><div><div class="lbl">Незаконченная попытка</div><div style="font-size:18px;font-weight:600;margin-top:4px">' + (run.mode === 'full' ? 'Полный вариант' : 'Part ' + run.parts[0]) + ' · отвечено ' + Object.keys(run.ans || {}).length + '</div></div><a class="btn" href="#' + (run.mode === 'full' ? rhash('full') : rhash(run.parts[0])) + '">Продолжить →</a></div>' : '') +
+        (run && !run.checked && run.mode !== 'mock' && run.mode !== 'mix' && (run.v || 1) === RV ? '<div class="cont"><div><div class="lbl">Незаконченная попытка</div><div style="font-size:18px;font-weight:600;margin-top:4px">' + (run.mode === 'full' ? 'Полный вариант' : 'Part ' + run.parts[0]) + ' · отвечено ' + Object.keys(run.ans || {}).length + '</div></div><a class="btn" href="#' + (run.mode === 'full' ? rhash('full') : rhash(run.parts[0])) + '">Продолжить →</a></div>' : '') +
     '<div class="grid2">' + R.parts.map(p => {
       const r = res[rkey(p.n)];
       const max = p.q.length * PTS[p.n];
@@ -1137,14 +1158,15 @@ function ReadingHub() {
 let E = null;
 function Exam(mode, parts) {
   const run = Store.data.reading.run;
-  const same = run && (run.v || 1) === RV && run.mode === mode && run.parts.join() === parts.join();
-  if (!E || (E.v || 1) !== RV || E.mode !== mode || E.parts.join() !== parts.join()) {
-    E = same ? Object.assign({ tab: 'q', v: RV }, run) : { v: RV, mode, parts, cur: 0, ans: {}, flags: {}, checked: false, elapsed: 0, tab: 'q', qcur: partOf(parts[0]).q[0].n };
+  const mixed = mode === 'mix', mixKey = mixed ? MIXV.join() : '';
+  const same = run && run.mode === mode && run.parts.join() === parts.join() && (mixed ? (run.mix || []).join() === mixKey : (run.v || 1) === RV);
+  if (!E || E.mode !== mode || E.parts.join() !== parts.join() || (mixed ? (E.mix || []).join() !== mixKey : (E.v || 1) !== RV)) {
+    E = same ? Object.assign({ tab: 'q', v: mixed ? 0 : RV }, run) : { v: mixed ? 0 : RV, mix: mixed ? MIXV.slice() : undefined, mode, parts, cur: 0, ans: {}, flags: {}, checked: false, elapsed: 0, tab: 'q', qcur: partOf(parts[0]).q[0].n };
     if (!same) saveRun();
   }
   E.since = Date.now();
   document.body.classList.add('exam');
-  if (mode === 'mock') setLast('mock-r', 'Пробный экзамен · Reading & UoE'); else setLast(mode === 'full' ? rhash('full') : rhash(parts[0]), 'Reading · ' + R.title + ' · ' + (mode === 'full' ? 'весь вариант' : 'Part ' + parts[0] + ' — ' + partOf(parts[0]).name));
+  if (mode === 'mock') setLast('mock-r', 'Пробный экзамен · Reading & UoE'); else if (mode === 'mix') setLast('mix', 'Reading · случайный вариант'); else setLast(mode === 'full' ? rhash('full') : rhash(parts[0]), 'Reading · ' + R.title + ' · ' + (mode === 'full' ? 'весь вариант' : 'Part ' + parts[0] + ' — ' + partOf(parts[0]).name));
   const tick = setInterval(() => {
     const el = $('#timer'); if (!el) return;
     const t = E.elapsed + (E.checked ? 0 : (Date.now() - E.since) / 1000);
@@ -1215,7 +1237,7 @@ function qBlock(p, q) {
   } else if (p.kind === 'gapped' || p.kind === 'matching') {
     const letters = p.kind === 'gapped' ? Object.keys(p.sents) : p.texts.map(t => t.k);
     const used = p.kind === 'gapped' ? Object.values(E.ans).filter(Boolean) : [];
-    h += '<div class="qh"><span class="qn">' + q.n + '</span><span>' + (p.kind === 'gapped' ? 'Какое предложение в пропуск ' + q.n + '?' : 'Which person mentions ' + esc(q.stem)) + '</span></div><div class="letters">' +
+    h += '<div class="qh"><span class="qn">' + q.n + '</span><span>' + (p.kind === 'gapped' ? 'Какое предложение в пропуск ' + q.n + '?' : esc(p.ask || 'Which person mentions') + ' ' + esc(q.stem)) + '</span></div><div class="letters">' +
       letters.map(L => { let c = ''; if (C) c = L === q.a ? ' ok' : (v === L ? ' bad' : ''); else if (v === L) c = ' sel'; else if (used.includes(L)) c = ' used'; return '<button type="button" class="' + c + '" data-pick="' + L + '"' + dis + ' aria-pressed="' + (v === L) + '">' + L + '</button>'; }).join('') + '</div>';
   }
   if (C) h += '<div class="verdict ' + (ok ? 'ok' : 'bad') + '"><div class="t">' + (ok ? 'Верно' : (v == null || v === '' ? 'Нет ответа' : 'Неверно') + ' · правильно: ' + esc(answerText(p, q))) + '</div>' + q.expl + '</div>';
@@ -1243,12 +1265,12 @@ function drawExam(keepScroll) {
       (E.xpGain != null ? '<span class="xpgain">' + ICON.bolt + '+' + E.xpGain + ' XP — по баллам Cambridge</span>' : '') +
       '<div class="small">Разбери объяснения к каждому вопросу ниже' + (p.kind === 'mc-text' || p.kind === 'matching' ? ', а фразы-доказательства подсвечены в тексте' : '') + '.</div>' +
       (E.mode === 'mock' ? (() => { const m = Store.data.reading.mock; return m && m.r ? '<div class="small"><b>Reading</b> (части 1, 5, 6, 7): ' + m.r.read + '/42 → ' + toScale('read', m.r.read) + ' · <b>Use of English</b> (части 2, 3, 4): ' + m.r.uoe + '/28 → ' + toScale('uoe', m.r.uoe) + ' по шкале Cambridge</div>' : ''; })() + '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm pri" href="#mock-w">Дальше: Writing →</a><a class="btn sm ghost" href="#mock">К пробному экзамену</a></div></div>'
-      : '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="retry">Пройти заново</button><a class="btn sm ghost" href="#' + rhash('hub') + '">К списку частей</a></div></div>');
+      : '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="retry">Пройти заново</button>' + (E.mode === 'mix' ? '<a class="btn sm pri" href="#mix-new">Новый случайный вариант</a><a class="btn sm ghost" href="#reading">К вариантам</a>' : '<a class="btn sm ghost" href="#' + rhash('hub') + '">К списку частей</a>') + '</div></div>');
   }
   const sentList = p.kind === 'gapped' ? '<div class="sents">' + Object.entries(p.sents).map(([k, s]) => '<div class="' + (!E.checked && Object.values(E.ans).includes(k) ? 'used' : '') + '"><b>' + k + '</b> ' + esc(s) + '</div>').join('') + '</div>' : '';
   view.innerHTML =
-    '<header class="ex-head"><a class="btn sm ghost" href="#' + (E.mode === 'mock' ? 'mock' : rhash('hub')) + '">' + ICON.back + 'Выйти</a>' +
-    '<span class="title">' + (E.mode === 'mock' ? 'Пробный экзамен · ' : '') + esc(R.title) + ' · ' + 'Part ' + p.n + ' · ' + esc(p.name) + '</span>' +
+    '<header class="ex-head"><a class="btn sm ghost" href="#' + (E.mode === 'mock' ? 'mock' : E.mode === 'mix' ? 'reading' : rhash('hub')) + '">' + ICON.back + 'Выйти</a>' +
+    '<span class="title">' + (E.mode === 'mock' ? 'Пробный экзамен · ' : '') + (E.mode === 'mix' ? 'Случайный вариант · ' + esc(RS[pv(p.n) - 1].title.replace('Вариант', 'из варианта')) : esc(R.title)) + ' · ' + 'Part ' + p.n + ' · ' + esc(p.name) + '</span>' +
     (E.mode !== 'part' ? '<div class="ptabs" aria-label="Части">' + E.parts.map((n, i) => '<button type="button" data-part="' + i + '" class="' + (i === E.cur ? 'on' : '') + '"><span class="pw">Part </span>' + n + '</button>').join('') + '</div>'
       : '<div class="ptabs" aria-label="Другие части">' + R.parts.map(pp => '<a class="pt' + (pp.n === p.n ? ' on' : '') + '" href="#' + rhash(pp.n) + '"><span class="pw">Part </span>' + pp.n + '</a>').join('') + '<a class="pt" href="#' + rhash('full') + '">Все</a></div>') +
     '<span class="sp"></span><div class="timer" id="timer" title="' + (E.mode !== 'part' ? 'Осталось времени' : 'Прошло времени') + '">' + ICON.clock + '<span>' + timeTxt + '</span></div>' +
@@ -1293,7 +1315,7 @@ function bindExam(p) {
   $('#prev').onclick = () => { const i = all.indexOf(E.qcur); if (i > 0) goQ(all[i - 1], true); };
   $('#next').onclick = () => { const i = all.indexOf(E.qcur); if (i < all.length - 1) goQ(all[i + 1], true); };
   if ($('#check')) $('#check').onclick = askCheck;
-  if ($('#retry')) $('#retry').onclick = () => { E = { xpGain: null, v: E.v || RV, mode: E.mode, parts: E.parts, cur: 0, ans: {}, flags: {}, checked: false, elapsed: 0, tab: 'q', qcur: partOf(E.parts[0]).q[0].n, since: Date.now() }; saveRun(); drawExam(); };
+  if ($('#retry')) $('#retry').onclick = () => { E = { xpGain: null, v: E.v, mix: E.mix, mode: E.mode, parts: E.parts, cur: 0, ans: {}, flags: {}, checked: false, elapsed: 0, tab: 'q', qcur: partOf(E.parts[0]).q[0].n, since: Date.now() }; saveRun(); drawExam(); };
 }
 function askCheck() {
   const qs = E.parts.flatMap(n => partOf(n).q);
@@ -1306,9 +1328,9 @@ function doCheck() {
   stamp(); E.checked = true;
   const res = Store.data.reading.results || (Store.data.reading.results = {});
   let pts = 0, max = 0;
-  for (const n of E.parts) { const s = partScore(partOf(n)); pts += s.pts; max += s.max; const k = rkey(n), prev = res[k]; res[k] = { best: Math.max(prev ? prev.best : 0, s.pts), last: s.pts, max: s.max, t: Date.now() }; }
+  for (const n of E.parts) { const s = partScore(partOf(n)); pts += s.pts; max += s.max; const k = rkey(n, pv(n)), prev = res[k]; res[k] = { best: Math.max(prev ? prev.best : 0, s.pts), last: s.pts, max: s.max, t: Date.now() }; }
   E.xpGain = pts;
-  for (const n of E.parts) { const pp = partOf(n); for (const q of pp.q) { const a = E.ans[q.n]; if (a != null && a !== '') noteResult(RV, n, q.n, isRight(pp, q, a)); } }
+  for (const n of E.parts) { const pp = partOf(n); for (const q of pp.q) { const a = E.ans[q.n]; if (a != null && a !== '') noteResult(pv(n), n, q.n, isRight(pp, q, a)); } }
   if (E.mode === 'mock' && Store.data.reading.mock && Store.data.reading.mock.stage === 'r') {
     const sec = ns => ns.reduce((a, n) => a + partScore(partOf(n)).pts, 0);
     Object.assign(Store.data.reading.mock, { r: { read: sec([1, 5, 6, 7]), uoe: sec([2, 3, 4]) }, stage: 'w' });
